@@ -18,32 +18,32 @@
 // Additional Comments:
 // 
 /*
-    ZASADY DZIA£ANIA MODU£U:
-    AUTOMAT ROZPOCZYNA PRAC  W STANIE 'NIC' - NA LINIECH WYJå∆ MAMY:
+    ZASADY DZIA≈ÅANIA MODU≈ÅU:
+    AUTOMAT ROZPOCZYNA PRACƒò W STANIE 'NIC' - NA LINIECH WYJ≈öƒÜ MAMY:
      [LINIA]    [STAN]    
-    CMD_OUT -> ODP_NIC (WYJåCIE DO MODU£U G£”WNEGO)
-    MON_OUT -> Z0G00   (WYJåCIE DO WYRZUTNIKA BILONU)
-    MODU£ CZEKA NA KOMEDN  Z MODU£U G£”WNEGO OZNAJMIAJ•C• CO
-    KLIENT WYBRA£ (JAK• OPCJ  ZAKUPU). W TYM STANIE W PRZYPADKU
-    OTRZYMANIA SYGNA£U Z WRZUTYNIKA BILONU MONETA ZWRACANA JEST
+    CMD_OUT -> ODP_NIC (WYJ≈öCIE DO MODU≈ÅU G≈Å√ìWNEGO)
+    MON_OUT -> Z0G00   (WYJ≈öCIE DO WYRZUTNIKA BILONU)
+    MODU≈Å CZEKA NA KOMEDNƒò Z MODU≈ÅU G≈Å√ìWNEGO OZNAJMIAJƒÑCƒÑ CO
+    KLIENT WYBRA≈Å (JAKƒÑ OPCJƒò ZAKUPU). W TYM STANIE W PRZYPADKU
+    OTRZYMANIA SYGNA≈ÅU Z WRZUTYNIKA BILONU MONETA ZWRACANA JEST
     AUTOMATYCZNIE DO WYRZYTNIKA.
     W PRZYPADKU OTRZYMANIA KOMENDY WYBORU OPCJI USTAWIANY JEST STAN
-    ODPOWIADAJ•CY CENIE WYBRANEJ OPCJI.
+    ODPOWIADAJƒÑCY CENIE WYBRANEJ OPCJI.
     KOMENDY WYBORU TO:
     CMD_OP1, CMD_OP2, CMD_OP3
-    W TYM MOMENCIE USTAWIANY JEST TAKØE SYGNA£ NA LINII CMD_OUT: ODP_W_TOKU.
-    WRZUCANIE MONET GENERUJE SYGNALY NA LINII MON_IN, KT”RE ZMNIEJSZAJ•
-    STAN AUTOMATU DO CZASU OSI•GNI CIA STANU Z0G00 - NADWYØKA ZOSTAJE
-    ZWR”CONA PRZEZ WYRZUTNIK BILONU
-    ZAKO—CZENIE PROCESU POBORU OP£ATY SYGNALIZOWANE JEST ZMIAN• SYGNA£U
+    W TYM MOMENCIE USTAWIANY JEST TAK≈ªE SYGNA≈Å NA LINII CMD_OUT: ODP_W_TOKU.
+    WRZUCANIE MONET GENERUJE SYGNALY NA LINII MON_IN, KT√ìRE ZMNIEJSZAJƒÑ
+    STAN AUTOMATU DO CZASU OSIƒÑGNIƒòCIA STANU Z0G00 - NADWY≈ªKA ZOSTAJE
+    ZWR√ìCONA PRZEZ WYRZUTNIK BILONU
+    ZAKO≈ÉCZENIE PROCESU POBORU OP≈ÅATY SYGNALIZOWANE JEST ZMIANƒÑ SYGNA≈ÅU
     NA LINI CMD_OUT NA ODP_OK (PO CHWILI ZMIENIONY NA ODP_NIC)
     
     W DOWOLNYM MOMENCIE OTRZYMANIE SYGNALU NA LINI CMD_IN: CMD_RESET
-    POWODUJE WYRZUCENIE WSZYSTKICH WRZUCONYCH (JEåLI TAKIE S•) MONET PRZEZ
-    WYRZUTNIK BIOLONU, NA LINII CMD_OUT USTAWIANY JEST DO CZASU SKO—CZENIA
-    ZWRACANIA SYGNA£ ODP_ZWROT. PO ZAKO—CZENIU SYGNA£ ZMIANIAMY NA ODP_RESET
+    POWODUJE WYRZUCENIE WSZYSTKICH WRZUCONYCH (JE≈öLI TAKIE SƒÑ) MONET PRZEZ
+    WYRZUTNIK BIOLONU, NA LINII CMD_OUT USTAWIANY JEST DO CZASU SKO≈ÉCZENIA
+    ZWRACANIA SYGNA≈Å ODP_ZWROT. PO ZAKO≈ÉCZENIU SYGNA≈Å ZMIANIAMY NA ODP_RESET
     (PO CHWILI ZMIENIONY NA ODP_NIC) I USTAWIONY ZOSTAJE STAN
-    POCZ•TKOWY AUTOMATU 'NIC'.
+    POCZƒÑTKOWY AUTOMATU 'NIC'.
  */ 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -53,12 +53,12 @@ module modul_monet(
     input wire [2:0] mon_in,            // wrzut monet
     output reg [2:0] mon_out,           // zwrot monet
     input wire [2:0] cmd_in,            // komenda: 0-nic,  1- zakup opcja1, 2- zakup opcja2, 3-zakup opcja3, 4-reset (pelen zwrot)
-    output reg [1:0] cmd_out//,            // odpowiedz na komendÍ
+    output reg [1:0] cmd_out//,            // odpowiedz na komendƒô
     //output reg [4:0] stan // debug
     );
     
     reg [4:0] stan;
-    // sygna≥y
+    // sygna≈Çy
     localparam [1:0] ODP_NIC    = 2'b00;
     localparam [1:0] ODP_W_TOKU = 2'b01;
     localparam [1:0] ODP_ZWROT  = 2'b10;
@@ -78,38 +78,38 @@ module modul_monet(
     // stany
     localparam [4:0]NIC   = 5'b00000;      // bezczynnosc
     localparam [4:0]m050  = 5'b00001;      // 50 groszy
-    localparam [4:0]m100  = 5'b00010;      // 1 z≥
-    localparam [4:0]m150  = 5'b00011;      // 1.50 z≥
-    localparam [4:0]m200  = 5'b00100;      // 2 z≥
-    localparam [4:0]m250  = 5'b00101;      // 2.50 z≥
-    localparam [4:0]m300  = 5'b00110;      // 3 z≥
-    localparam [4:0]m350  = 5'b00111;      // 3.50 z≥
-    localparam [4:0]m400  = 5'b01000;      // 4 z≥
-    localparam [4:0]m450  = 5'b01001;      // 4.50 z≥
-    localparam [4:0]m500  = 5'b01010;      // 5 z≥
-    localparam [4:0]m550  = 5'b01011;      // 5.50 z≥
-    localparam [4:0]m600  = 5'b01100;      // 6 z≥
-    localparam [4:0]m650  = 5'b01101;      // 6.50 z≥
-    localparam [4:0]m700  = 5'b01110;      // 7.00 z≥
-    localparam [4:0]m750  = 5'b01111;      // 7.50 z≥
-    localparam [4:0]m800  = 5'b10000;      // 8.00 z≥
-    localparam [4:0]m850  = 5'b10001;      // 8.50 z≥
-    localparam [4:0]m900  = 5'b10010;      // 9.00 z≥
-    localparam [4:0]m950  = 5'b10011;      // 9.50 z≥
-    localparam [4:0]m1000 = 5'b10100;      // 10.00 z≥    
+    localparam [4:0]m100  = 5'b00010;      // 1 z≈Ç
+    localparam [4:0]m150  = 5'b00011;      // 1.50 z≈Ç
+    localparam [4:0]m200  = 5'b00100;      // 2 z≈Ç
+    localparam [4:0]m250  = 5'b00101;      // 2.50 z≈Ç
+    localparam [4:0]m300  = 5'b00110;      // 3 z≈Ç
+    localparam [4:0]m350  = 5'b00111;      // 3.50 z≈Ç
+    localparam [4:0]m400  = 5'b01000;      // 4 z≈Ç
+    localparam [4:0]m450  = 5'b01001;      // 4.50 z≈Ç
+    localparam [4:0]m500  = 5'b01010;      // 5 z≈Ç
+    localparam [4:0]m550  = 5'b01011;      // 5.50 z≈Ç
+    localparam [4:0]m600  = 5'b01100;      // 6 z≈Ç
+    localparam [4:0]m650  = 5'b01101;      // 6.50 z≈Ç
+    localparam [4:0]m700  = 5'b01110;      // 7.00 z≈Ç
+    localparam [4:0]m750  = 5'b01111;      // 7.50 z≈Ç
+    localparam [4:0]m800  = 5'b10000;      // 8.00 z≈Ç
+    localparam [4:0]m850  = 5'b10001;      // 8.50 z≈Ç
+    localparam [4:0]m900  = 5'b10010;      // 9.00 z≈Ç
+    localparam [4:0]m950  = 5'b10011;      // 9.50 z≈Ç
+    localparam [4:0]m1000 = 5'b10100;      // 10.00 z≈Ç    
     
-	parameter CENA_OP1 = m300;				// cena opcji 1 (3.00z≥ - expresso)
-    parameter CENA_OP2 = m500;              // cena opcji 2 (5.00z≥ - expresso grande :P )
-    parameter CENA_OP3 = m750;              // cena opcji 3 (7.50z≥ - cappucino :P )
+	parameter CENA_OP1 = m300;				// cena opcji 1 (3.00z≈Ç - expresso)
+    parameter CENA_OP2 = m500;              // cena opcji 2 (5.00z≈Ç - expresso grande :P )
+    parameter CENA_OP3 = m750;              // cena opcji 3 (7.50z≈Ç - cappucino :P )
     
-    reg [4:0]n_stan;        // nastÍpny stan - ZMIENNA TYMCZASOWA
+    reg [4:0]n_stan;        // nastƒôpny stan - ZMIENNA TYMCZASOWA
    
     // typy monet
     localparam [2:0]z0g00 = 3'b000;      // brak monety - stan zerowy
     localparam [2:0]z0g50 = 3'b001;      // 50 groszy
-    localparam [2:0]z1g00 = 3'b010;      // 1 z≥
-    localparam [2:0]z2g00 = 3'b011;      // 2 z≥
-    localparam [2:0]z5g00 = 3'b100;      // 5 z≥
+    localparam [2:0]z1g00 = 3'b010;      // 1 z≈Ç
+    localparam [2:0]z2g00 = 3'b011;      // 2 z≈Ç
+    localparam [2:0]z5g00 = 3'b100;      // 5 z≈Ç
     
     initial
         begin // zerujemy
@@ -119,40 +119,40 @@ module modul_monet(
             mon_out = 3'b000;
         end
 
-    always @(cmd_in) // otrzymaliúmy komendÍ
+    always @(cmd_in) // otrzymali≈õmy komendƒô
        begin
-                n_stan = stan;  // ustawiamy nastÍpny stan na starty gdyby stan nie uleg≥ zmianie (pÍtelka)
+                n_stan = stan;  // ustawiamy nastƒôpny stan na starty gdyby stan nie uleg≈Ç zmianie (pƒôtelka)
                     case (cmd_in)
                         CMD_OP1:
                             begin
-                                n_stan = CENA_OP1; // stan na cenÍ zakupou opcji 1
+                                n_stan = CENA_OP1; // stan na cenƒô zakupou opcji 1
                                 cmd_out = ODP_W_TOKU;
                                 // $display("[disp:op1] stan:%5b, cmd_out:%5b @ %0t", stan, cmd_out, $time);
                             end
                         CMD_OP2:
                             begin
-                                n_stan = CENA_OP2; // stan na cenÍ zakupou opcji 2
+                                n_stan = CENA_OP2; // stan na cenƒô zakupou opcji 2
                                 cmd_out = ODP_W_TOKU;
                             end
                         CMD_OP3:
                             begin
-                                n_stan = CENA_OP3; // stan na cenÍ zakupou opcji 3
+                                n_stan = CENA_OP3; // stan na cenƒô zakupou opcji 3
                                 cmd_out = ODP_W_TOKU;
                             end
                         CMD_RESET1:  // rezygnujemy z zakupu opcji 3
-                            if (cmd_out == ODP_W_TOKU)  // jeúli wybraliúmy juz opcjÍ
+                            if (cmd_out == ODP_W_TOKU)  // je≈õli wybrali≈õmy juz opcjƒô
                                 begin
                                     cmd_out = ODP_ZWROT;    // rozpoczynamy zwrot
                                     n_stan = CENA_OP1-stan;
                                 end
                         CMD_RESET2:  // rezygnujemy z zakupu opcji 2
-                             if (cmd_out == ODP_W_TOKU)  // jeúli wybraliúmy juz opcjÍ
+                             if (cmd_out == ODP_W_TOKU)  // je≈õli wybrali≈õmy juz opcjƒô
                                 begin
                                     cmd_out = ODP_ZWROT;    // rozpoczynamy zwrot
                                     n_stan = CENA_OP2-stan;
                                 end
                         CMD_RESET3:  // rezygnujemy z zakupu opcji 3
-                             if (cmd_out == ODP_W_TOKU)  // jeúli wybraliúmy juz opcjÍ
+                             if (cmd_out == ODP_W_TOKU)  // je≈õli wybrali≈õmy juz opcjƒô
                                 begin
                                     cmd_out = ODP_ZWROT;    // rozpoczynamy zwrot
                                     n_stan = CENA_OP3-stan;
@@ -166,16 +166,16 @@ module modul_monet(
             case (stan)
                 NIC:
                     begin
-                        //wrzucono monetÍ ale jestesmy w stanie poczπtkowym albo juø nie trzeba nic wrzucaÊ
-                         mon_out <= mon_in; // zwracamy monetÍ
+                        //wrzucono monetƒô ale jestesmy w stanie poczƒÖtkowym albo ju≈º nie trzeba nic wrzucaƒá
+                         mon_out <= mon_in; // zwracamy monetƒô
                          n_stan <= NIC;  // stan nie ulega zmianie
                     end
                  m050:
                     begin
                         case(cmd_out)
-                            ODP_ZWROT:  // sytuacja, w ktÛrej zwracamy pieniπdze, a ktos wrzuci≥ nastÍpnπ monetÍ
+                            ODP_ZWROT:  // sytuacja, w kt√≥rej zwracamy pieniƒÖdze, a ktos wrzuci≈Ç nastƒôpnƒÖ monetƒô
                                 begin
-                                    mon_out <= mon_in;  // zwracamy monetÍ
+                                    mon_out <= mon_in;  // zwracamy monetƒô
                                     n_stan <= stan;      // stan pozostaje bez zmian.
                                 end
                             ODP_W_TOKU: // potrzebujemy jeszce 50 groszy
@@ -184,26 +184,26 @@ module modul_monet(
                                         n_stan<=stan; // wrzucono 0 groszy O_o - nic nie robimy
                                     z0g50:
                                         begin
-                                            n_stan <= NIC; // wrzucono 50 groszy i tyle brakowa≥o
-                                            cmd_out <= ODP_OK; // informujemy MG, øe wszystko ok
+                                            n_stan <= NIC; // wrzucono 50 groszy i tyle brakowa≈Ço
+                                            cmd_out <= ODP_OK; // informujemy MG, ≈ºe wszystko ok
                                         end
                                     z1g00:
                                         begin
-                                            n_stan <= m050; // wrzucono 1 z≥, brakowa≥o 50 groszy
+                                            n_stan <= m050; // wrzucono 1 z≈Ç, brakowa≈Ço 50 groszy
                                             mon_out <= z0g50; // zwrot 50 groszy
-                                            cmd_out <= ODP_OK; // informujemy MG, øe wszystko ok
+                                            cmd_out <= ODP_OK; // informujemy MG, ≈ºe wszystko ok
                                         end                                        
                                     z2g00:
                                         begin
-                                            n_stan <= m050; // wrzucono 2 z≥, brakowa≥o 50 groszy
-                                            mon_out <= z1g00; // zwrot 1.00 z≥
-                                            cmd_out <= ODP_ZWROT; // informujemy MG, øe pozosta≥o coú do zwrotu
+                                            n_stan <= m050; // wrzucono 2 z≈Ç, brakowa≈Ço 50 groszy
+                                            mon_out <= z1g00; // zwrot 1.00 z≈Ç
+                                            cmd_out <= ODP_ZWROT; // informujemy MG, ≈ºe pozosta≈Ço co≈õ do zwrotu
                                         end                                        
                                     z5g00:
                                         begin
-                                            n_stan <= m250; // wrzucono 5 z≥, brakowa≥o 50 groszy
-                                            mon_out <= z2g00; // zwrot 2.00 z≥
-                                            cmd_out <= ODP_ZWROT; // informujemy MG, øe pozosta≥o coú do zwrotu
+                                            n_stan <= m250; // wrzucono 5 z≈Ç, brakowa≈Ço 50 groszy
+                                            mon_out <= z2g00; // zwrot 2.00 z≈Ç
+                                            cmd_out <= ODP_ZWROT; // informujemy MG, ≈ºe pozosta≈Ço co≈õ do zwrotu
                                         end                                        
                                 endcase
                           endcase
@@ -211,12 +211,12 @@ module modul_monet(
                  m100:
                     begin
                         case(cmd_out)
-                            ODP_ZWROT:  // sytuacja, w ktÛrej zwracamy pieniπdze, a ktos wrzuci≥ nastÍpnπ monetÍ
+                            ODP_ZWROT:  // sytuacja, w kt√≥rej zwracamy pieniƒÖdze, a ktos wrzuci≈Ç nastƒôpnƒÖ monetƒô
                                 begin
-                                    mon_out <= mon_in;  // zwracamy monetÍ
+                                    mon_out <= mon_in;  // zwracamy monetƒô
                                     n_stan <= stan;      // stan pozostaje bez zmian.
                                 end
-                            ODP_W_TOKU: // potrzebujemy jeszce 1 z≥
+                            ODP_W_TOKU: // potrzebujemy jeszce 1 z≈Ç
                                 case (mon_in)
                                     z0g00:
                                         n_stan <= stan; // wrzucono 0 groszy O_o - nic nie robimy
@@ -224,20 +224,20 @@ module modul_monet(
                                          n_stan <= m050; // wrzucono 50 groszy 
                                     z1g00:
                                         begin
-                                            n_stan <= NIC; // wrzucono 1 z≥ i tyle brakowa≥o
-                                            cmd_out <= ODP_OK; // informujemy MG, øe wszystko ok
+                                            n_stan <= NIC; // wrzucono 1 z≈Ç i tyle brakowa≈Ço
+                                            cmd_out <= ODP_OK; // informujemy MG, ≈ºe wszystko ok
                                         end                                        
                                     z2g00:
                                         begin
-                                            n_stan <= NIC; // wrzucono 2 z≥, brakowa≥o 1 z≥
-                                            mon_out <= z1g00; // zwrot 1.00 z≥
-                                            cmd_out <= ODP_OK; // informujemy MG, øe wszyswtko ok
+                                            n_stan <= NIC; // wrzucono 2 z≈Ç, brakowa≈Ço 1 z≈Ç
+                                            mon_out <= z1g00; // zwrot 1.00 z≈Ç
+                                            cmd_out <= ODP_OK; // informujemy MG, ≈ºe wszyswtko ok
                                         end                                        
                                     z5g00:
                                         begin
-                                            n_stan <= m200; // wrzucono 5 z≥, brakowa≥o 1 z≥
-                                            mon_out <= z2g00; // zwrot 2.00 z≥
-                                            cmd_out <= ODP_ZWROT; // informujemy MG, øe pozosta≥o coú do zwrotu
+                                            n_stan <= m200; // wrzucono 5 z≈Ç, brakowa≈Ço 1 z≈Ç
+                                            mon_out <= z2g00; // zwrot 2.00 z≈Ç
+                                            cmd_out <= ODP_ZWROT; // informujemy MG, ≈ºe pozosta≈Ço co≈õ do zwrotu
                                         end                                        
                                 endcase
                           endcase
@@ -245,30 +245,30 @@ module modul_monet(
                  m150:
                     begin
                         case(cmd_out)
-                            ODP_ZWROT:  // sytuacja, w ktÛrej zwracamy pieniπdze, a ktos wrzuci≥ nastÍpnπ monetÍ
+                            ODP_ZWROT:  // sytuacja, w kt√≥rej zwracamy pieniƒÖdze, a ktos wrzuci≈Ç nastƒôpnƒÖ monetƒô
                                 begin
-                                    mon_out <= mon_in;  // zwracamy monetÍ
+                                    mon_out <= mon_in;  // zwracamy monetƒô
                                     n_stan = stan;      // stan pozostaje bez zmian.
                                 end
-                            ODP_W_TOKU: // potrzebujemy jeszce 1.50 z≥
+                            ODP_W_TOKU: // potrzebujemy jeszce 1.50 z≈Ç
                                 case (mon_in)
                                     z0g00:
                                         n_stan<=stan; // wrzucono 0 groszy O_o - nic nie robimy
                                     z0g50:
                                         n_stan <= m100; // wrzucono 50 groszy 
                                     z1g00:
-                                        n_stan <= m050; // wrzucono 1 z≥, brakowa≥o 1,50 z≥
+                                        n_stan <= m050; // wrzucono 1 z≈Ç, brakowa≈Ço 1,50 z≈Ç
                                     z2g00:
                                         begin
-                                            n_stan <= NIC; // wrzucono 2 z≥, brakowa≥o 1.50 z≥
+                                            n_stan <= NIC; // wrzucono 2 z≈Ç, brakowa≈Ço 1.50 z≈Ç
                                             mon_out <= z0g50; // zwrot 50 groszy
-                                            cmd_out <= ODP_OK; // informujemy MG, øe wszyswtko ok
+                                            cmd_out <= ODP_OK; // informujemy MG, ≈ºe wszyswtko ok
                                         end                                        
                                     z5g00:
                                         begin
-                                            n_stan <= m150; // wrzucono 5 z≥, brakowa≥o 1.50 z≥
-                                            mon_out <= z2g00; // zwrot 2.00 z≥
-                                            cmd_out <= ODP_ZWROT; // informujemy MG, øe pozosta≥o coú do zwrotu
+                                            n_stan <= m150; // wrzucono 5 z≈Ç, brakowa≈Ço 1.50 z≈Ç
+                                            mon_out <= z2g00; // zwrot 2.00 z≈Ç
+                                            cmd_out <= ODP_ZWROT; // informujemy MG, ≈ºe pozosta≈Ço co≈õ do zwrotu
                                         end                                        
                                 endcase
                           endcase
@@ -276,29 +276,29 @@ module modul_monet(
                  m200:
                     begin
                         case(cmd_out)
-                            ODP_ZWROT:  // sytuacja, w ktÛrej zwracamy pieniπdze, a ktos wrzuci≥ nastÍpnπ monetÍ
+                            ODP_ZWROT:  // sytuacja, w kt√≥rej zwracamy pieniƒÖdze, a ktos wrzuci≈Ç nastƒôpnƒÖ monetƒô
                                 begin
-                                    mon_out <= mon_in;  // zwracamy monetÍ
+                                    mon_out <= mon_in;  // zwracamy monetƒô
                                     n_stan <= stan;      // stan pozostaje bez zmian.
                                 end
-                            ODP_W_TOKU: // potrzebujemy jeszce 2 z≥
+                            ODP_W_TOKU: // potrzebujemy jeszce 2 z≈Ç
                                 case (mon_in)
                                     z0g00:
                                         n_stan<=stan; // wrzucono 0 groszy O_o - nic nie robimy
                                     z0g50:
                                         n_stan <= m150; // wrzucono 50 groszy 
                                     z1g00:
-                                        n_stan <= m100; // wrzucono 1 z≥ i tyle brakowa≥o
+                                        n_stan <= m100; // wrzucono 1 z≈Ç i tyle brakowa≈Ço
                                     z2g00:
                                         begin
-                                            n_stan <= NIC; // wrzucono 2 z≥ i tyle brakowa≥o
-                                            cmd_out <= ODP_OK; // informujemy MG, øe wszyswtko ok
+                                            n_stan <= NIC; // wrzucono 2 z≈Ç i tyle brakowa≈Ço
+                                            cmd_out <= ODP_OK; // informujemy MG, ≈ºe wszyswtko ok
                                         end                                        
                                     z5g00:
                                         begin
-                                            n_stan <= m100; // wrzucono 5 z≥, brakowa≥o 2 z≥
-                                            mon_out <= z2g00; // zwrot 2.00 z≥
-                                            cmd_out <= ODP_ZWROT; // informujemy MG, øe wszystko OK
+                                            n_stan <= m100; // wrzucono 5 z≈Ç, brakowa≈Ço 2 z≈Ç
+                                            mon_out <= z2g00; // zwrot 2.00 z≈Ç
+                                            cmd_out <= ODP_ZWROT; // informujemy MG, ≈ºe wszystko OK
                                         end                                        
                                 endcase
                           endcase
@@ -306,26 +306,26 @@ module modul_monet(
                  m250:
                     begin
                         case(cmd_out)
-                            ODP_ZWROT:  // sytuacja, w ktÛrej zwracamy pieniπdze, a ktos wrzuci≥ nastÍpnπ monetÍ
+                            ODP_ZWROT:  // sytuacja, w kt√≥rej zwracamy pieniƒÖdze, a ktos wrzuci≈Ç nastƒôpnƒÖ monetƒô
                                 begin
-                                    mon_out <= mon_in;  // zwracamy monetÍ
+                                    mon_out <= mon_in;  // zwracamy monetƒô
                                     n_stan <= stan;      // stan pozostaje bez zmian.
                                 end
-                            ODP_W_TOKU: // potrzebujemy jeszce 2,50 z≥
+                            ODP_W_TOKU: // potrzebujemy jeszce 2,50 z≈Ç
                                 case (mon_in)
                                     z0g00:
                                         n_stan<=stan; // wrzucono 0 groszy O_o - nic nie robimy
                                     z0g50:
                                         n_stan <= m200; // wrzucono 50 groszy 
                                     z1g00:
-                                        n_stan <= m150; // wrzucono 1 z≥ 
+                                        n_stan <= m150; // wrzucono 1 z≈Ç 
                                     z2g00:
-                                        n_stan <= m050; // wrzucono 2 z≥ 
+                                        n_stan <= m050; // wrzucono 2 z≈Ç 
                                     z5g00:
                                         begin
-                                            n_stan <= m050; // wrzucono 5 z≥, brakowa≥o 2,50 z≥
-                                            mon_out <= z2g00; // zwrot 2.00 z≥
-                                            cmd_out <= ODP_ZWROT; // informujemy MG, øe pozosta≥o coú do zwrotu
+                                            n_stan <= m050; // wrzucono 5 z≈Ç, brakowa≈Ço 2,50 z≈Ç
+                                            mon_out <= z2g00; // zwrot 2.00 z≈Ç
+                                            cmd_out <= ODP_ZWROT; // informujemy MG, ≈ºe pozosta≈Ço co≈õ do zwrotu
                                         end                                        
                                 endcase
                           endcase
@@ -333,26 +333,26 @@ module modul_monet(
                  m300:
                     begin
                         case(cmd_out)
-                            ODP_ZWROT:  // sytuacja, w ktÛrej zwracamy pieniπdze, a ktos wrzuci≥ nastÍpnπ monetÍ
+                            ODP_ZWROT:  // sytuacja, w kt√≥rej zwracamy pieniƒÖdze, a ktos wrzuci≈Ç nastƒôpnƒÖ monetƒô
                                 begin
-                                    mon_out <= mon_in;  // zwracamy monetÍ
+                                    mon_out <= mon_in;  // zwracamy monetƒô
                                     n_stan <= stan;      // stan pozostaje bez zmian.
                                 end
-                            ODP_W_TOKU: // potrzebujemy jeszce 3 z≥
+                            ODP_W_TOKU: // potrzebujemy jeszce 3 z≈Ç
                                 case (mon_in)
                                     z0g00:
                                         n_stan<=stan; // wrzucono 0 groszy O_o - nic nie robimy
                                     z0g50:
                                         n_stan <= m250; // wrzucono 50 groszy 
                                     z1g00:
-                                        n_stan <= m200; // wrzucono 1 z≥ 
+                                        n_stan <= m200; // wrzucono 1 z≈Ç 
                                     z2g00:
-                                        n_stan <= m100; // wrzucono 2 z≥ 
+                                        n_stan <= m100; // wrzucono 2 z≈Ç 
                                     z5g00:
                                         begin
-                                            n_stan <= NIC; // wrzucono 5 z≥, brakowa≥o 3,00 z≥
-                                            mon_out <= z2g00; // zwrot 2.00 z≥
-                                            cmd_out <= ODP_OK; // informujemy MG, øe wszystko ok
+                                            n_stan <= NIC; // wrzucono 5 z≈Ç, brakowa≈Ço 3,00 z≈Ç
+                                            mon_out <= z2g00; // zwrot 2.00 z≈Ç
+                                            cmd_out <= ODP_OK; // informujemy MG, ≈ºe wszystko ok
                                         end                                        
                                 endcase
                           endcase
@@ -360,26 +360,26 @@ module modul_monet(
                  m350:
                     begin
                         case(cmd_out)
-                            ODP_ZWROT:  // sytuacja, w ktÛrej zwracamy pieniπdze, a ktos wrzuci≥ nastÍpnπ monetÍ
+                            ODP_ZWROT:  // sytuacja, w kt√≥rej zwracamy pieniƒÖdze, a ktos wrzuci≈Ç nastƒôpnƒÖ monetƒô
                                 begin
-                                    mon_out <= mon_in;  // zwracamy monetÍ
+                                    mon_out <= mon_in;  // zwracamy monetƒô
                                     n_stan <= stan;      // stan pozostaje bez zmian.
                                 end
-                            ODP_W_TOKU: // potrzebujemy jeszce 3,50 z≥
+                            ODP_W_TOKU: // potrzebujemy jeszce 3,50 z≈Ç
                                 case (mon_in)
                                     z0g00:
                                         n_stan<=stan; // wrzucono 0 groszy O_o - nic nie robimy
                                     z0g50:
                                         n_stan <= m300; // wrzucono 50 groszy 
                                     z1g00:
-                                        n_stan <= m250; // wrzucono 1 z≥ 
+                                        n_stan <= m250; // wrzucono 1 z≈Ç 
                                     z2g00:
-                                        n_stan <= m150; // wrzucono 2 z≥ 
+                                        n_stan <= m150; // wrzucono 2 z≈Ç 
                                     z5g00:
                                         begin
-                                            n_stan <= m050; // wrzucono 5 z≥, brakowa≥o 3,50 z≥
-                                            mon_out <= z1g00; // zwrot 1.00 z≥
-                                            cmd_out <= ODP_ZWROT; // informujemy MG, øe pozosta≥o coú do zwrotu
+                                            n_stan <= m050; // wrzucono 5 z≈Ç, brakowa≈Ço 3,50 z≈Ç
+                                            mon_out <= z1g00; // zwrot 1.00 z≈Ç
+                                            cmd_out <= ODP_ZWROT; // informujemy MG, ≈ºe pozosta≈Ço co≈õ do zwrotu
                                         end                                        
                                 endcase
                           endcase
@@ -387,26 +387,26 @@ module modul_monet(
                  m400:
                     begin
                         case(cmd_out)
-                            ODP_ZWROT:  // sytuacja, w ktÛrej zwracamy pieniπdze, a ktos wrzuci≥ nastÍpnπ monetÍ
+                            ODP_ZWROT:  // sytuacja, w kt√≥rej zwracamy pieniƒÖdze, a ktos wrzuci≈Ç nastƒôpnƒÖ monetƒô
                                 begin
-                                    mon_out <= mon_in;  // zwracamy monetÍ
+                                    mon_out <= mon_in;  // zwracamy monetƒô
                                     n_stan <= stan;      // stan pozostaje bez zmian.
                                 end
-                            ODP_W_TOKU: // potrzebujemy jeszce 4 z≥
+                            ODP_W_TOKU: // potrzebujemy jeszce 4 z≈Ç
                                 case (mon_in)
                                     z0g00:
                                         n_stan<=stan; // wrzucono 0 groszy O_o - nic nie robimy
                                     z0g50:
                                         n_stan <= m350; // wrzucono 50 groszy 
                                     z1g00:
-                                        n_stan <= m300; // wrzucono 1 z≥ 
+                                        n_stan <= m300; // wrzucono 1 z≈Ç 
                                     z2g00:
-                                        n_stan <= m200; // wrzucono 2 z≥ 
+                                        n_stan <= m200; // wrzucono 2 z≈Ç 
                                     z5g00:
                                         begin
-                                            n_stan <= NIC; // wrzucono 5 z≥, brakowa≥o 4 z≥
-                                            mon_out <= z1g00; // zwrot 1.00 z≥
-                                            cmd_out <= ODP_OK; // informujemy MG, øe wszystko ok
+                                            n_stan <= NIC; // wrzucono 5 z≈Ç, brakowa≈Ço 4 z≈Ç
+                                            mon_out <= z1g00; // zwrot 1.00 z≈Ç
+                                            cmd_out <= ODP_OK; // informujemy MG, ≈ºe wszystko ok
                                         end                                        
                                 endcase
                           endcase
@@ -414,26 +414,26 @@ module modul_monet(
                  m450:
                     begin
                         case(cmd_out)
-                            ODP_ZWROT:  // sytuacja, w ktÛrej zwracamy pieniπdze, a ktos wrzuci≥ nastÍpnπ monetÍ
+                            ODP_ZWROT:  // sytuacja, w kt√≥rej zwracamy pieniƒÖdze, a ktos wrzuci≈Ç nastƒôpnƒÖ monetƒô
                                 begin
-                                    mon_out <= mon_in;  // zwracamy monetÍ
+                                    mon_out <= mon_in;  // zwracamy monetƒô
                                     n_stan = stan;      // stan pozostaje bez zmian.
                                 end
-                            ODP_W_TOKU: // potrzebujemy jeszce 4,50 z≥
+                            ODP_W_TOKU: // potrzebujemy jeszce 4,50 z≈Ç
                                 case (mon_in)
                                     z0g00:
                                         n_stan<=stan; // wrzucono 0 groszy O_o - nic nie robimy
                                     z0g50:
                                         n_stan <= m400; // wrzucono 50 groszy 
                                     z1g00:
-                                        n_stan <= m350; // wrzucono 1 z≥ 
+                                        n_stan <= m350; // wrzucono 1 z≈Ç 
                                     z2g00:
-                                        n_stan <= m250; // wrzucono 2 z≥ 
+                                        n_stan <= m250; // wrzucono 2 z≈Ç 
                                     z5g00:
                                         begin
-                                            n_stan <= NIC; // wrzucono 5 z≥, brakowa≥o 4,50 z≥
-                                            mon_out <= z0g50; // zwrot0,50 z≥
-                                            cmd_out <= ODP_OK; // informujemy MG, øe wszystko ok
+                                            n_stan <= NIC; // wrzucono 5 z≈Ç, brakowa≈Ço 4,50 z≈Ç
+                                            mon_out <= z0g50; // zwrot0,50 z≈Ç
+                                            cmd_out <= ODP_OK; // informujemy MG, ≈ºe wszystko ok
                                         end                                        
                                 endcase
                           endcase
@@ -441,25 +441,25 @@ module modul_monet(
                  m500:
                     begin
                         case(cmd_out)
-                            ODP_ZWROT:  // sytuacja, w ktÛrej zwracamy pieniπdze, a ktos wrzuci≥ nastÍpnπ monetÍ
+                            ODP_ZWROT:  // sytuacja, w kt√≥rej zwracamy pieniƒÖdze, a ktos wrzuci≈Ç nastƒôpnƒÖ monetƒô
                                 begin
-                                    mon_out <= mon_in;  // zwracamy monetÍ
+                                    mon_out <= mon_in;  // zwracamy monetƒô
                                     n_stan <= stan;      // stan pozostaje bez zmian.
                                 end
-                            ODP_W_TOKU: // potrzebujemy jeszce 5 z≥
+                            ODP_W_TOKU: // potrzebujemy jeszce 5 z≈Ç
                                 case (mon_in)
                                     z0g00:
                                         n_stan<=stan; // wrzucono 0 groszy O_o - nic nie robimy
                                     z0g50:
                                         n_stan <= m450; // wrzucono 50 groszy 
                                     z1g00:
-                                        n_stan <= m400; // wrzucono 1 z≥ 
+                                        n_stan <= m400; // wrzucono 1 z≈Ç 
                                     z2g00:
-                                        n_stan <= m300; // wrzucono 2 z≥ 
+                                        n_stan <= m300; // wrzucono 2 z≈Ç 
                                     z5g00:
                                         begin
-                                            n_stan <= NIC; // wrzucono 5 z≥, brakowa≥o 4 z≥
-                                            cmd_out <= ODP_OK; // informujemy MG, øe wszystko ok
+                                            n_stan <= NIC; // wrzucono 5 z≈Ç, brakowa≈Ço 4 z≈Ç
+                                            cmd_out <= ODP_OK; // informujemy MG, ≈ºe wszystko ok
                                         end                                        
                                 endcase
                           endcase
@@ -467,230 +467,230 @@ module modul_monet(
                  m550:
                     begin
                         case(cmd_out)
-                            ODP_ZWROT:  // sytuacja, w ktÛrej zwracamy pieniπdze, a ktos wrzuci≥ nastÍpnπ monetÍ
+                            ODP_ZWROT:  // sytuacja, w kt√≥rej zwracamy pieniƒÖdze, a ktos wrzuci≈Ç nastƒôpnƒÖ monetƒô
                                 begin
-                                    mon_out <= mon_in;  // zwracamy monetÍ
+                                    mon_out <= mon_in;  // zwracamy monetƒô
                                     n_stan <= stan;      // stan pozostaje bez zmian.
                                 end
-                            ODP_W_TOKU: // potrzebujemy jeszce 5,50 z≥
+                            ODP_W_TOKU: // potrzebujemy jeszce 5,50 z≈Ç
                                 case (mon_in)
                                     z0g00:
                                         n_stan<=stan; // wrzucono 0 groszy O_o - nic nie robimy
                                     z0g50:
                                         n_stan <= m500; // wrzucono 50 groszy 
                                     z1g00:
-                                        n_stan <= m450; // wrzucono 1 z≥ 
+                                        n_stan <= m450; // wrzucono 1 z≈Ç 
                                     z2g00:
-                                        n_stan <= m350; // wrzucono 2 z≥ 
+                                        n_stan <= m350; // wrzucono 2 z≈Ç 
                                     z5g00:
-                                        n_stan <= m050; // wrzucono 5 z≥
+                                        n_stan <= m050; // wrzucono 5 z≈Ç
                                 endcase
                           endcase
                     end
                  m600:
                     begin
                         case(cmd_out)
-                            ODP_ZWROT:  // sytuacja, w ktÛrej zwracamy pieniπdze, a ktos wrzuci≥ nastÍpnπ monetÍ
+                            ODP_ZWROT:  // sytuacja, w kt√≥rej zwracamy pieniƒÖdze, a ktos wrzuci≈Ç nastƒôpnƒÖ monetƒô
                                 begin
-                                    mon_out <= mon_in;  // zwracamy monetÍ
+                                    mon_out <= mon_in;  // zwracamy monetƒô
                                     n_stan <= stan;      // stan pozostaje bez zmian.
                                 end
-                            ODP_W_TOKU: // potrzebujemy jeszce 6 z≥
+                            ODP_W_TOKU: // potrzebujemy jeszce 6 z≈Ç
                                 case (mon_in)
                                     z0g00:
                                         n_stan<=stan; // wrzucono 0 groszy O_o - nic nie robimy
                                     z0g50:
                                         n_stan <= m550; // wrzucono 50 groszy 
                                     z1g00:
-                                        n_stan <= m500; // wrzucono 1 z≥ 
+                                        n_stan <= m500; // wrzucono 1 z≈Ç 
                                     z2g00:
-                                        n_stan <= m400; // wrzucono 2 z≥ 
+                                        n_stan <= m400; // wrzucono 2 z≈Ç 
                                     z5g00:
-                                        n_stan <= m100; // wrzucono 5 z≥
+                                        n_stan <= m100; // wrzucono 5 z≈Ç
                                 endcase
                           endcase
                     end
                  m650:
                     begin
                         case(cmd_out)
-                            ODP_ZWROT:  // sytuacja, w ktÛrej zwracamy pieniπdze, a ktos wrzuci≥ nastÍpnπ monetÍ
+                            ODP_ZWROT:  // sytuacja, w kt√≥rej zwracamy pieniƒÖdze, a ktos wrzuci≈Ç nastƒôpnƒÖ monetƒô
                                 begin
-                                    mon_out <= mon_in;  // zwracamy monetÍ
+                                    mon_out <= mon_in;  // zwracamy monetƒô
                                     n_stan <= stan;      // stan pozostaje bez zmian.
                                 end
-                            ODP_W_TOKU: // potrzebujemy jeszce 6,50 z≥
+                            ODP_W_TOKU: // potrzebujemy jeszce 6,50 z≈Ç
                                 case (mon_in)
                                     z0g00:
                                         n_stan<=stan; // wrzucono 0 groszy O_o - nic nie robimy
                                     z0g50:
                                         n_stan <= m600; // wrzucono 50 groszy 
                                     z1g00:
-                                        n_stan <= m550; // wrzucono 1 z≥ 
+                                        n_stan <= m550; // wrzucono 1 z≈Ç 
                                     z2g00:
-                                        n_stan <= m450; // wrzucono 2 z≥ 
+                                        n_stan <= m450; // wrzucono 2 z≈Ç 
                                     z5g00:
-                                        n_stan <= m150; // wrzucono 5 z≥
+                                        n_stan <= m150; // wrzucono 5 z≈Ç
                                 endcase
                           endcase
                     end
                  m700:
                     begin
                         case(cmd_out)
-                            ODP_ZWROT:  // sytuacja, w ktÛrej zwracamy pieniπdze, a ktos wrzuci≥ nastÍpnπ monetÍ
+                            ODP_ZWROT:  // sytuacja, w kt√≥rej zwracamy pieniƒÖdze, a ktos wrzuci≈Ç nastƒôpnƒÖ monetƒô
                                 begin
-                                    mon_out <= mon_in;  // zwracamy monetÍ
+                                    mon_out <= mon_in;  // zwracamy monetƒô
                                     n_stan <= stan;      // stan pozostaje bez zmian.
                                 end
-                            ODP_W_TOKU: // potrzebujemy jeszce 7 z≥
+                            ODP_W_TOKU: // potrzebujemy jeszce 7 z≈Ç
                                 case (mon_in)
                                     z0g00:
                                         n_stan=stan; // wrzucono 0 groszy O_o - nic nie robimy
                                     z0g50:
                                         n_stan <= m650; // wrzucono 50 groszy 
                                     z1g00:
-                                        n_stan <= m600; // wrzucono 1 z≥ 
+                                        n_stan <= m600; // wrzucono 1 z≈Ç 
                                     z2g00:
-                                        n_stan <= m500; // wrzucono 2 z≥ 
+                                        n_stan <= m500; // wrzucono 2 z≈Ç 
                                     z5g00:
-                                        n_stan <= m200; // wrzucono 5 z≥
+                                        n_stan <= m200; // wrzucono 5 z≈Ç
                                 endcase
                           endcase
                     end
                  m750:
                     begin
                         case(cmd_out)
-                            ODP_ZWROT:  // sytuacja, w ktÛrej zwracamy pieniπdze, a ktos wrzuci≥ nastÍpnπ monetÍ
+                            ODP_ZWROT:  // sytuacja, w kt√≥rej zwracamy pieniƒÖdze, a ktos wrzuci≈Ç nastƒôpnƒÖ monetƒô
                                 begin
-                                    mon_out <= mon_in;  // zwracamy monetÍ
+                                    mon_out <= mon_in;  // zwracamy monetƒô
                                     n_stan <= stan;      // stan pozostaje bez zmian.
                                 end
-                            ODP_W_TOKU: // potrzebujemy jeszce 7,50 z≥
+                            ODP_W_TOKU: // potrzebujemy jeszce 7,50 z≈Ç
                                 case (mon_in)
                                     z0g00:
                                         n_stan<=stan; // wrzucono 0 groszy O_o - nic nie robimy
                                     z0g50:
                                         n_stan <= m700; // wrzucono 50 groszy 
                                     z1g00:
-                                        n_stan <= m650; // wrzucono 1 z≥ 
+                                        n_stan <= m650; // wrzucono 1 z≈Ç 
                                     z2g00:
-                                        n_stan <= m550; // wrzucono 2 z≥ 
+                                        n_stan <= m550; // wrzucono 2 z≈Ç 
                                     z5g00:
-                                        n_stan <= m250; // wrzucono 5 z≥
+                                        n_stan <= m250; // wrzucono 5 z≈Ç
                                 endcase
                           endcase
                     end
                  m800:
                     begin
                         case(cmd_out)
-                            ODP_ZWROT:  // sytuacja, w ktÛrej zwracamy pieniπdze, a ktos wrzuci≥ nastÍpnπ monetÍ
+                            ODP_ZWROT:  // sytuacja, w kt√≥rej zwracamy pieniƒÖdze, a ktos wrzuci≈Ç nastƒôpnƒÖ monetƒô
                                 begin
-                                    mon_out <= mon_in;  // zwracamy monetÍ
+                                    mon_out <= mon_in;  // zwracamy monetƒô
                                     n_stan <= stan;      // stan pozostaje bez zmian.
                                 end
-                            ODP_W_TOKU: // potrzebujemy jeszce 8 z≥
+                            ODP_W_TOKU: // potrzebujemy jeszce 8 z≈Ç
                                 case (mon_in)
                                     z0g00:
                                         n_stan<=stan; // wrzucono 0 groszy O_o - nic nie robimy
                                     z0g50:
                                         n_stan <= m750; // wrzucono 50 groszy 
                                     z1g00:
-                                        n_stan <= m700; // wrzucono 1 z≥ 
+                                        n_stan <= m700; // wrzucono 1 z≈Ç 
                                     z2g00:
-                                        n_stan <= m600; // wrzucono 2 z≥ 
+                                        n_stan <= m600; // wrzucono 2 z≈Ç 
                                     z5g00:
-                                        n_stan <= m300; // wrzucono 5 z≥
+                                        n_stan <= m300; // wrzucono 5 z≈Ç
                                 endcase
                           endcase
                     end
                  m850:
                     begin
                         case(cmd_out)
-                            ODP_ZWROT:  // sytuacja, w ktÛrej zwracamy pieniπdze, a ktos wrzuci≥ nastÍpnπ monetÍ
+                            ODP_ZWROT:  // sytuacja, w kt√≥rej zwracamy pieniƒÖdze, a ktos wrzuci≈Ç nastƒôpnƒÖ monetƒô
                                 begin
-                                    mon_out <= mon_in;  // zwracamy monetÍ
+                                    mon_out <= mon_in;  // zwracamy monetƒô
                                     n_stan <= stan;      // stan pozostaje bez zmian.
                                 end
-                            ODP_W_TOKU: // potrzebujemy jeszce 8,50 z≥
+                            ODP_W_TOKU: // potrzebujemy jeszce 8,50 z≈Ç
                                 case (mon_in)
                                     z0g00:
                                         n_stan<=stan; // wrzucono 0 groszy O_o - nic nie robimy
                                     z0g50:
                                         n_stan <= m800; // wrzucono 50 groszy 
                                     z1g00:
-                                        n_stan <= m750; // wrzucono 1 z≥ 
+                                        n_stan <= m750; // wrzucono 1 z≈Ç 
                                     z2g00:
-                                        n_stan <= m650; // wrzucono 2 z≥ 
+                                        n_stan <= m650; // wrzucono 2 z≈Ç 
                                     z5g00:
-                                        n_stan <= m350; // wrzucono 5 z≥
+                                        n_stan <= m350; // wrzucono 5 z≈Ç
                                 endcase
                           endcase
                     end
                  m900:
                     begin
                         case(cmd_out)
-                            ODP_ZWROT:  // sytuacja, w ktÛrej zwracamy pieniπdze, a ktos wrzuci≥ nastÍpnπ monetÍ
+                            ODP_ZWROT:  // sytuacja, w kt√≥rej zwracamy pieniƒÖdze, a ktos wrzuci≈Ç nastƒôpnƒÖ monetƒô
                                 begin
-                                    mon_out <= mon_in;  // zwracamy monetÍ
+                                    mon_out <= mon_in;  // zwracamy monetƒô
                                     n_stan <= stan;      // stan pozostaje bez zmian.
                                 end
-                            ODP_W_TOKU: // potrzebujemy jeszce 9 z≥
+                            ODP_W_TOKU: // potrzebujemy jeszce 9 z≈Ç
                                 case (mon_in)
                                     z0g00:
                                         n_stan<=stan; // wrzucono 0 groszy O_o - nic nie robimy
                                     z0g50:
                                         n_stan <= m850; // wrzucono 50 groszy 
                                     z1g00:
-                                        n_stan <= m800; // wrzucono 1 z≥ 
+                                        n_stan <= m800; // wrzucono 1 z≈Ç 
                                     z2g00:
-                                        n_stan <= m700; // wrzucono 2 z≥ 
+                                        n_stan <= m700; // wrzucono 2 z≈Ç 
                                     z5g00:
-                                        n_stan <= m400; // wrzucono 5 z≥
+                                        n_stan <= m400; // wrzucono 5 z≈Ç
                                 endcase
                           endcase
                     end
                  m950:
                     begin
                         case(cmd_out)
-                            ODP_ZWROT:  // sytuacja, w ktÛrej zwracamy pieniπdze, a ktos wrzuci≥ nastÍpnπ monetÍ
+                            ODP_ZWROT:  // sytuacja, w kt√≥rej zwracamy pieniƒÖdze, a ktos wrzuci≈Ç nastƒôpnƒÖ monetƒô
                                 begin
-                                    mon_out <= mon_in;  // zwracamy monetÍ
+                                    mon_out <= mon_in;  // zwracamy monetƒô
                                     n_stan <= stan;      // stan pozostaje bez zmian.
                                 end
-                            ODP_W_TOKU: // potrzebujemy jeszce 9,50 z≥
+                            ODP_W_TOKU: // potrzebujemy jeszce 9,50 z≈Ç
                                 case (mon_in)
                                     z0g00:
                                         n_stan<=stan; // wrzucono 0 groszy O_o - nic nie robimy
                                     z0g50:
                                         n_stan <= m900; // wrzucono 50 groszy 
                                     z1g00:
-                                        n_stan <= m850; // wrzucono 1 z≥ 
+                                        n_stan <= m850; // wrzucono 1 z≈Ç 
                                     z2g00:
-                                        n_stan <= m750; // wrzucono 2 z≥ 
+                                        n_stan <= m750; // wrzucono 2 z≈Ç 
                                     z5g00:
-                                        n_stan <= m450; // wrzucono 5 z≥
+                                        n_stan <= m450; // wrzucono 5 z≈Ç
                                 endcase
                           endcase
                     end
                  m1000:
                     begin
                         case(cmd_out)
-                            ODP_ZWROT:  // sytuacja, w ktÛrej zwracamy pieniπdze, a ktos wrzuci≥ nastÍpnπ monetÍ
+                            ODP_ZWROT:  // sytuacja, w kt√≥rej zwracamy pieniƒÖdze, a ktos wrzuci≈Ç nastƒôpnƒÖ monetƒô
                                 begin
-                                    mon_out <= mon_in;  // zwracamy monetÍ
+                                    mon_out <= mon_in;  // zwracamy monetƒô
                                     n_stan <= stan;      // stan pozostaje bez zmian.
                                 end
-                            ODP_W_TOKU: // potrzebujemy 10 z≥
+                            ODP_W_TOKU: // potrzebujemy 10 z≈Ç
                                 case (mon_in)
                                     z0g00:
                                         n_stan<=stan; // wrzucono 0 groszy O_o - nic nie robimy
                                     z0g50:
                                         n_stan <= m950; // wrzucono 50 groszy 
                                     z1g00:
-                                        n_stan <= m900; // wrzucono 1 z≥ 
+                                        n_stan <= m900; // wrzucono 1 z≈Ç 
                                     z2g00:
-                                        n_stan <= m800; // wrzucono 2 z≥ 
+                                        n_stan <= m800; // wrzucono 2 z≈Ç 
                                     z5g00:
-                                        n_stan <= m500; // wrzucono 5 z≥
+                                        n_stan <= m500; // wrzucono 5 z≈Ç
                                 endcase
                           endcase
                     end
@@ -698,67 +698,67 @@ module modul_monet(
         end
         always @(clk)
            #2 begin
-                if (cmd_out == ODP_ZWROT && mon_in == z0g00 && mon_out == z0g00) begin // tutaj zwracamuy pieniπdze
+                if (cmd_out == ODP_ZWROT && mon_in == z0g00 && mon_out == z0g00) begin // tutaj zwracamuy pieniƒÖdze
                     case (stan)
                         NIC:
-                            cmd_out <= ODP_OK; // tak na wszelki wypadek - do pÛüniej usuniÍcia
-                        m450:   // 450 do zwrotu (maksumalna iloúÊ)
+                            cmd_out <= ODP_OK; // tak na wszelki wypadek - do p√≥≈∫niej usuniƒôcia
+                        m450:   // 450 do zwrotu (maksumalna ilo≈õƒá)
                             begin
-                                mon_out <= z2g00;   // zwracamy 2 z≥
-                                n_stan <= m250;     // pozosta≥o 2,50 z≥ do zwrotu
+                                mon_out <= z2g00;   // zwracamy 2 z≈Ç
+                                n_stan <= m250;     // pozosta≈Ço 2,50 z≈Ç do zwrotu
                             end
                         m400:
                             begin
-                                mon_out <= z2g00;   // zwracamy 2 z≥
-                                n_stan <= m200;     // pozosta≥o 2 z≥ do zwrotu
+                                mon_out <= z2g00;   // zwracamy 2 z≈Ç
+                                n_stan <= m200;     // pozosta≈Ço 2 z≈Ç do zwrotu
                             end
                         m350:
                             begin
-                                mon_out <= z2g00;   // zwracamy 2 z≥
-                                n_stan <= m150;     // pozosta≥o 1,50 z≥ do zwrotu
+                                mon_out <= z2g00;   // zwracamy 2 z≈Ç
+                                n_stan <= m150;     // pozosta≈Ço 1,50 z≈Ç do zwrotu
                             end
                         m300:
                             begin
-                                mon_out <= z2g00;   // zwracamy 2 z≥
-                                n_stan <= m100;     // pozosta≥o 1 z≥ do zwrotu
+                                mon_out <= z2g00;   // zwracamy 2 z≈Ç
+                                n_stan <= m100;     // pozosta≈Ço 1 z≈Ç do zwrotu
                             end
                         m250:
                             begin
-                                mon_out <= z2g00;   // zwracamy 2 z≥
-                                n_stan <= m050;     // pozosta≥o 50 gr do zwrotu
+                                mon_out <= z2g00;   // zwracamy 2 z≈Ç
+                                n_stan <= m050;     // pozosta≈Ço 50 gr do zwrotu
                             end
                         m200:
                             begin
                                 n_stan <= NIC;      // stan zerowy - koniec zwrotu
-                                mon_out <= z2g00;   // zwracamy 2 z≥
-                                cmd_out <= ODP_OK;  // koniec zwrotu - informujemy modÛ≥ g≥Ûwny
+                                mon_out <= z2g00;   // zwracamy 2 z≈Ç
+                                cmd_out <= ODP_OK;  // koniec zwrotu - informujemy modu≈Ç g≈Ç√≥wny
                             end
                         m150:
                             begin
                                 n_stan <= m050;
-                                mon_out <= z1g00;   // zwracamy 1 z≥
+                                mon_out <= z1g00;   // zwracamy 1 z≈Ç
                             end
                         m100:
                             begin
                                 n_stan <= NIC;      // stan zerowy - koniec zwrotu
-                                mon_out <= z1g00;   // zwracamy 1 z≥
-                                cmd_out <= ODP_OK;  // koniec zwrotu - informujemy modÛ≥ g≥Ûwny
+                                mon_out <= z1g00;   // zwracamy 1 z≈Ç
+                                cmd_out <= ODP_OK;  // koniec zwrotu - informujemy mod√≥≈Ç g≈Ç√≥wny
                             end
                         m050:
                             begin
                                 n_stan <= NIC;      // stan zerowy - koniec zwrotu
                                 mon_out <= z0g50;   // zwracamy 50 gr
-                                cmd_out <= ODP_OK;  // koniec zwrotu - informujemy modÛ≥ g≥Ûwny
+                                cmd_out <= ODP_OK;  // koniec zwrotu - informujemy mod√≥≈Ç g≈Ç√≥wny
                             end
                     endcase
                 end
-                #10 if (cmd_out == ODP_OK) cmd_out = ODP_NIC; // koniec wrzutu lub zwrotu - modÛ≥ w stanie zero
-                #11 if (mon_out != z0g00) mon_out = z0g00; // po 10ns zerujemy sygna≥ zwrotu monety
+		   #10 if (cmd_out == ODP_OK) cmd_out = ODP_NIC; // koniec wrzutu lub zwrotu - modu≈Ç w stanie zero
+                #11 if (mon_out != z0g00) mon_out = z0g00; // po 10ns zerujemy sygna≈Ç zwrotu monety
                 
             end
 
     always @(*)
         #3 begin
-            stan = n_stan;      // ustawiamy nastÍpny stan
+            stan = n_stan;      // ustawiamy nastƒôpny stan
         end      
 endmodule
