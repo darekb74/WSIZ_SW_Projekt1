@@ -96,7 +96,7 @@ module modul_monet(
     localparam [4:0]m950  = 5'b10011;      // 9.50 z³
     localparam [4:0]m1000 = 5'b10100;      // 10 z³    
     
-	parameter CENA_OP1 = m300;			   // cena opcji 1 (3.00z³ - expresso)
+    parameter CENA_OP1 = m300;			   // cena opcji 1 (3.00z³ - expresso)
     parameter CENA_OP2 = m500;             // cena opcji 2 (5.00z³ - expresso grande :P )
     parameter CENA_OP3 = m750;             // cena opcji 3 (7.50z³ - cappuccino :P )
 
@@ -168,59 +168,28 @@ module modul_monet(
                             n_stan <= stan;             // stan bez zmian
                             mon_out <= mon_in;          // zwracamy monetê
                         end
-                    else begin                          // w innym przypadku kontynuujemy zwrot monet  
-                        case (stan)
-                            NIC:
-                                cmd_out <= ODP_OK;      // tak na wszelki wypadek - do usuniêcia
-                            m450:                       // 4,50 do zwrotu (maksymalna iloœæ)
-                                begin
-                                    mon_out <= z2g00;   // zwracamy 2 z³
-                                    n_stan <= m250;     // pozosta³o 2,50 z³ do zwrotu
-                                end
-                            m400:
-                                begin
-                                    mon_out <= z2g00;   // zwracamy 2 z³
-                                    n_stan <= m200;     // pozosta³o 2 z³ do zwrotu
-                                end
-                            m350:
-                                begin
-                                    mon_out <= z2g00;   // zwracamy 2 z³
-                                    n_stan <= m150;     // pozosta³o 1,50 z³ do zwrotu
-                                end
-                            m300:
-                                begin
-                                    mon_out <= z2g00;   // zwracamy 2 z³
-                                    n_stan <= m100;     // pozosta³o 1 z³ do zwrotu
-                                end
-                            m250:
-                                begin
-                                    mon_out <= z2g00;   // zwracamy 2 z³
-                                    n_stan <= m050;     // pozosta³o 50 gr do zwrotu
-                                end
-                            m200:
-                                begin
-                                    n_stan <= NIC;      // stan zerowy - koniec zwrotu
-                                    mon_out <= z2g00;   // zwracamy 2 z³
-                                    cmd_out <= ODP_OK;  // koniec zwrotu - informujemy modu³ g³ówny
-                                end
-                            m150:
-                                begin
-                                    n_stan <= m050;
-                                    mon_out <= z1g00;   // zwracamy 1 z³
-                                end
-                            m100:
-                                begin
-                                    n_stan <= NIC;      // stan zerowy - koniec zwrotu
-                                    mon_out <= z1g00;   // zwracamy 1 z³
-                                    cmd_out <= ODP_OK;  // koniec zwrotu - informujemy modu³ g³ówny
-                                end
-                            m050:
-                                begin
-                                    n_stan <= NIC;      // stan zerowy - koniec zwrotu
-                                    mon_out <= z0g50;   // zwracamy 50 gr
-                                    cmd_out <= ODP_OK;  // koniec zwrotu - informujemy modu³ g³ówny
-                                end
-                        endcase
+                    else begin                          // w innym przypadku kontynuujemy zwrot monet 
+                        if (stan>m200) begin            // ponad 2 z³ do zwrotu
+                            mon_out <= z2g00;           // zwracamy 2 z³
+                            n_stan <= stan - m200;      // ustawiamy nastêpny stan
+                            end
+                        else if (stan == m200) begin    // dok³adnie 2 z³ do zwrotu
+                            mon_out <= z2g00;           // zwracamy 2 z³
+                            n_stan <= NIC;              // ustawiamy nastêpny stan
+                            cmd_out <= ODP_OK;          // informujemy MG, ¿e wszystko OK
+                            end
+                        else if (stan == m150) begin    // pozosta³o 1,50 do zwrotu
+                            mon_out <= z1g00;           // zwracamy 1 z³
+                            n_stan <= m050;             // ustawiamy nastêpny stan
+                            end
+                        else begin
+                            case (stan)
+                                m050:  mon_out <= z0g50;// pozosta³o 50 gr do zwrotu - zwracamy
+                                m100:  mon_out <= z1g00;// pozosta³o 1 z³ do zwrotu - zwracamy
+                            endcase
+                            n_stan <= NIC;              // ustawiamy nastêpny stan
+                            cmd_out <= ODP_OK;          // informujemy MG, ¿e wszystko OK
+                            end 
                     end
                 ODP_W_TOKU:                             // jesteœmy w trybie op³aty za opcjê
                     begin
