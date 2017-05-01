@@ -168,8 +168,17 @@ module modul_monet(
                             n_stan <= stan;             // stan bez zmian
                             mon_out <= mon_in;          // zwracamy monetê
                         end
-                    else begin                          // w innym przypadku kontynuujemy zwrot monet 
-                        if (stan>m200) begin            // ponad 2 z³ do zwrotu
+                    else begin                          // w innym przypadku kontynuujemy zwrot monet
+                        if (stan>m500) begin            // ponad 5 z³ do zwrotu
+                            mon_out <= z5g00;           // zwracamy 5 z³
+                            n_stan <= stan - m500;      // ustawiamy nastêpny stan
+                            end
+                        else if (stan==m500) begin      // równo 5 z³ do zwrotu
+                            mon_out <= z5g00;           // zwracamy 5 z³
+                            n_stan <= NIC;              // ustawiamy nastêpny stan
+                            cmd_out <= ODP_OK;          // informujemy MG, ¿e wszystko OK
+                            end
+                        else if (stan>m200) begin       // ponad 2 z³ do zwrotu
                             mon_out <= z2g00;           // zwracamy 2 z³
                             n_stan <= stan - m200;      // ustawiamy nastêpny stan
                             end
