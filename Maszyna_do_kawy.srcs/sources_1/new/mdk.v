@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: WSIZ Copernicus
-// Engineer: Darek Brzêk
+// Engineer: Darek B.
 // 
 // Create Date: 25.04.2017 18:46:49
 // Design Name:  
@@ -24,20 +24,16 @@ module mdk_top(
     input wire clk,                         // zegar
     // sygna³ z przycisków
     input wire [2:0]panel_przyciskow_in,    // przyciski - wybór kawy 
-	// czujnik sprawnoœci maszyny 
-	input wire sprawnosc_in,                // czujnikami zajmie siê inny modu³ - tu wystarczy sygna³: 0-sprawny, 1-niesprawny
-	//input wire kubki_t,                     // czujnik iloœci kubków
-    //input wire woda_t,                      // czujnik poziomu wody
-    //input wire kawa_t,                      // czujnik iloœci kawy
-    //input wire mleko_t,                     // czujnik iloœci mleka
+    // czujnik sprawnoœci maszyny 
+    input wire sprawnosc_in,                // czujnikami zajmie siê inny modu³ - tu wystarczy sygna³: 0-sprawny, 1-niesprawny
     // sterowanie modu³em monet
     input wire[1:0]cmd_in,                  // odpowiedz na koendê z modu³u odpowedzialnego za monety
     output reg [2:0]cmd_out,                // komenda do modu³u odpowedzialnego za monety
     // sterowanie poszczególnymi etapami parzenia kawy - do zmiany na [2:0]
-	output reg kubek,                       // podstawienie kubka
+    output reg kubek,                       // podstawienie kubka
     output reg woda,                        // w³¹czanie dozowania wody
-    output reg kawa,                        // w³aczanie m³ynka do kawy
-    output reg mleko                        // w³acznie dozowania mleka (spieniacz)
+    output reg kawa,                        // w³¹czanie m³ynka do kawy
+    output reg mleko                        // w³¹czanie dozowania mleka (spieniacz)
     );
     
     // KOMENDY JEDNOBITOWE
@@ -89,16 +85,16 @@ module mdk_top(
     localparam [4:0]m950  = 5'b10011;      // 9.50 z³
     localparam [4:0]m1000 = 5'b10100;      // 10.00 z³
     
-	parameter CENA_OP1 = m300;				// cena opcji 1 (3.00z³ - expresso)
-	parameter CENA_OP2 = m500;				// cena opcji 2 (5.00z³ - expresso grande :P )
-	parameter CENA_OP3 = m750;				// cena opcji 3 (7.50z³ - cappucino :P )
+    parameter CENA_OP1 = m300;				// cena opcji 1 (3.00z³ - expresso)
+    parameter CENA_OP2 = m500;				// cena opcji 2 (5.00z³ - expresso grande :P )
+    parameter CENA_OP3 = m750;				// cena opcji 3 (7.50z³ - cappucino :P )
 
     //reg [4:0]stan;                          // stan maszyny
 
     // ³¹czymy modu³y
     // pod³¹czamy modu³ monet
     modul_monet #(.CENA_OP1(CENA_OP1), .CENA_OP2(CENA_OP2), .CENA_OP3(CENA_OP3)) wrzut_zwrot(.clk(clk), .cmd_in(cmd_out), .cmd_out(cmd_in));
-    
+   
     initial
         begin
             kubek = STAN_ZEROWY;
@@ -106,11 +102,10 @@ module mdk_top(
             kawa = STAN_ZEROWY;
             mleko = STAN_ZEROWY;
 			cmd_out = CMD_NIC;
-			//stan = 
         end
     always @(panel_przyciskow_in)
         #1 begin
-            if (sprawnosc_in == 1'b1) begin     // sterowanie dostêpne tylko w przypadku sprawnej maszyny
+            if (sprawnosc_in == 1'b0) begin     // sterowanie dostêpne tylko w przypadku sprawnej maszyny
                 case (panel_przyciskow_in)
                     CMD_OP1: // wciœniêto przycisk wyboru opcji 1
                         if(cmd_in == ODP_NIC)   // jeœli modu³ nic nie robi

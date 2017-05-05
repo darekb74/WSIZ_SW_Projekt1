@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
+// Company: WSIZ Copernicus
+// Engineer: Darek B.
 // 
 // Create Date: 26.04.2017 18:27:52
 // Design Name: 
@@ -24,9 +24,6 @@ module test_bench();
 
     reg clk;
     reg [2:0]panel_przyciskow;
-    
-    reg [2:0]monety_in;
-    wire [2:0]monety_out;
     
     localparam [4:0]NIC   = 5'b00000;      // bezczynnosc
     localparam [4:0]m050  = 5'b00001;      // 50 groszy
@@ -70,49 +67,55 @@ module test_bench();
     parameter CENA_OP1 = m300;				// cena opcji 1 (3.00z³ - expresso )
     parameter CENA_OP2 = m500;              // cena opcji 2 (5.00z³ - expresso grande :P )
     parameter CENA_OP3 = m750;              // cena opcji 3 (7.50z³ - cappuccino :P )
+
+    // sterowanie i podgl¹d modu³u sprawnoœci
+    reg sprawnosc;
+
    
-    reg [4:0]stan;
-    reg sprawnosc;                          // chwilowo zastêpuje oddzielny modu³
-    
-    
+    // pod³¹czamy modu³ g³ówny
     mdk_top #(.CENA_OP1(CENA_OP1), .CENA_OP2(CENA_OP2), .CENA_OP3(CENA_OP3)) uut(.clk(clk), .panel_przyciskow_in(panel_przyciskow), .sprawnosc_in(sprawnosc));
-    modul_monet #(.CENA_OP1(CENA_OP1), .CENA_OP2(CENA_OP2), .CENA_OP3(CENA_OP3)) uut2(.clk(clk), .mon_in(monety_in), .mon_out(monety_out), .cmd_in(uut.cmd_out));
+    
+    // sterowanie i podgl¹d modu³u monet
+    reg [2:0]monety_in;
+    wire [2:0]monety_out;
+    wire [4:0]stan;
+    assign uut.wrzut_zwrot.mon_in = monety_in;
+    assign monety_out = uut.wrzut_zwrot.mon_out;
+    assign stan = uut.wrzut_zwrot.stan;
    
     initial 
         begin
             clk = 1'b0;
+            sprawnosc <= 1'b0; // maszyna sprawna - tymczasowe - zajmie siê tym modu³
             monety_in = z0g00;
             panel_przyciskow = CMD_NIC;
-            stan = uut2.stan;
-            sprawnosc = 1'b1;
             // zaczynamy
-            #20 monety_in <= z0g50;             // wrzucamy 50 groszy
-            #20 monety_in <= z1g00;             // wrzucamy 1 z³
-            #20 monety_in <= z2g00;             // wrzucamy 2 z³
-            #20 monety_in <= z5g00;             // wrzucamy 5 z³
-            #20 panel_przyciskow <= CMD_OP1;    // wybieramy opcjê nr 1
-            #20 panel_przyciskow <= CMD_OP2;    // wybieramy opcjê nr 2 (bez resetu)
-            #20 monety_in <= z2g00;             // wrzucamy 2 z³
-            #20 monety_in <= z0g50;             // wrzucamy 50 gr
-            #20 panel_przyciskow = CMD_RESET;   // reset 
+            #50 monety_in <= z0g50;             // wrzucamy 50 groszy
+            #50 monety_in <= z1g00;             // wrzucamy 1 z³
+            #50 monety_in <= z2g00;             // wrzucamy 2 z³
+            #50 monety_in <= z5g00;             // wrzucamy 5 z³
+            #50 panel_przyciskow <= CMD_OP1;    // wybieramy opcjê nr 1
+            #50 panel_przyciskow <= CMD_OP2;    // wybieramy opcjê nr 2 (bez resetu)
+            #50 monety_in <= z2g00;             // wrzucamy 2 z³
+            #50 monety_in <= z0g50;             // wrzucamy 50 gr
+            #50 panel_przyciskow = CMD_RESET;   // reset 
             #10 monety_in <= z5g00;             // wrzucamy 5 z³
 
             
         end
     always
         begin
-            #5 
+            #10 // 50MHz
                 begin
                     clk <= ~clk;        // zegar - tick
-                    stan = uut2.stan;   // pobieramy zmienn¹ stan z modu³u monet (do podgl¹du)
                 end
         end
      always @(clk)
         begin
             if (monety_in != z0g00)
-               #10 monety_in <= z0g00;              // moneta wpad³a wiêc zerujemy sygna³
+               #20 monety_in <= z0g00;              // moneta wpad³a wiêc zerujemy sygna³
             if (panel_przyciskow != 1'b0)
-               #10 panel_przyciskow <= CMD_NIC;     // moneta wpad³a wiêc zerujemy sygna³
+               #20 panel_przyciskow <= CMD_NIC;     // moneta wpad³a wiêc zerujemy sygna³
         end
     
 endmodule
