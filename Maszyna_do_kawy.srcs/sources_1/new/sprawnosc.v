@@ -11,6 +11,6 @@ output signal_s;
 input c_k, p_w, i_k, i_m, p_b;
 //powyżej zadeklarowałem porty
 
-assing signal_s = c_k | p_w | i_k | i_m | p_b;
+assign signal_s = c_k | p_w | i_k | i_m | p_b;
 
 endmodule
