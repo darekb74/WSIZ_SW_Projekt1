@@ -47,17 +47,20 @@ module mdk_top(
     // ³¹czymy modu³y
     // pod³¹czamy modu³ monet
     modul_monet #(.CENA_OP1(CENA_OP1), .CENA_OP2(CENA_OP2), .CENA_OP3(CENA_OP3)) wrzut_zwrot(.clk(clk), .cmd_in(cmd_out), .cmd_out(cmd_in));
-   
-    initial
-        begin
-            kubek = `STAN_ZEROWY;
-            woda = `STAN_ZEROWY;
-            kawa = `STAN_ZEROWY;
-            mleko = `STAN_ZEROWY;
-			cmd_out = `CMD_NIC;
-        end
+    // pod³¹czamy modu³ sprawnosci
+    sprawnosc spr_test(.signal_s(sprawnosc_in));
+
     always @(panel_przyciskow_in)
         #1 begin
+            if (panel_przyciskow_in == `CMD_RESET && cmd_in === 2'bXX) // automat nic nie robi - reset pocz¹tkowy
+                begin
+                    // ustawienia poczatkowe
+                    kubek = `STAN_ZEROWY;
+                    woda = `STAN_ZEROWY;
+                    kawa = `STAN_ZEROWY;
+                    mleko = `STAN_ZEROWY;
+                    cmd_out = `CMD_RESET;   // resetujemy modu³ monet
+                end
             if (sprawnosc_in == 1'b0) begin     // sterowanie dostêpne tylko w przypadku sprawnej maszyny
                 case (panel_przyciskow_in)
                     `CMD_OP1: // wciœniêto przycisk wyboru opcji 1
@@ -81,4 +84,8 @@ module mdk_top(
                 endcase
             end
         end
+        always @(negedge clk)
+            begin
+                if (cmd_out == `CMD_RESET && cmd_in == `ODP_NIC) cmd_out <= `CMD_NIC;  // zerowanie linii komend po wstêpnym resecie
+            end
 endmodule

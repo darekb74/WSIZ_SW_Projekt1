@@ -65,15 +65,6 @@ module modul_monet(
     reg [4:0]stan;                         // aktualny stan    
     reg [4:0]n_stan;                       // nastêpny stan
     reg [4:0]tmp;                          // zmienna tymczasowa potrzebna do obliczeñ
-   
-    initial
-        begin // zerujemy
-            stan = `NIC;
-            n_stan = `NIC;
-            cmd_out = 2'b00;
-            mon_out = 3'b000;
-            tmp = `NIC;
-        end
 
     always @(cmd_in) // otrzymaliœmy komendê
         begin
@@ -111,6 +102,15 @@ module modul_monet(
                         begin
                             cmd_out <= `ODP_ZWROT;       // rozpoczynamy zwrot
                             n_stan <= CENA_OP3-stan;
+                        end
+                `CMD_RESET:                         // reset pocz¹tkowy
+                    if (cmd_out === 2'bxx)          // jeœli automat nie zosta³ zresetowany wczeœniej
+                        begin
+                            stan = `NIC;
+                            n_stan = `NIC;
+                            cmd_out = 2'b00;
+                            mon_out = 3'b000;
+                            tmp = `NIC;
                         end
            endcase
         end
