@@ -51,7 +51,7 @@ module counter(count_in, count_out, clk);
             if(cout_out == 1 && count_to_0 > 0)
                 count_to_0 <= count_to_0 - 1;
             else
-                count_to_0 <= 0;    
+                count_out <= 0;    
         end
         
 endmodule
