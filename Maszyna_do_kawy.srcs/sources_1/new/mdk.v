@@ -1,3 +1,32 @@
+
+Skip to content
+This repository
+
+    Pull requests
+    Issues
+    Gist
+
+    @zimour
+
+1
+0
+
+    0
+
+darekb74/WSIZ_SW_Projekt1
+Code
+Issues 0
+Pull requests 0
+Projects 0
+Pulse
+Graphs
+WSIZ_SW_Projekt1/Maszyna_do_kawy.srcs/sources_1/new/mdk.v
+2c30c8c 9 minutes ago
+@zimour zimour zmiany
+@darekb74
+@szymons97
+@zimour
+96 lines (87 sloc) 4.03 KB
 `include "defines.v"
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -28,9 +57,10 @@ module mdk_top(
     // czujnik sprawnoœci maszyny 
     input wire sprawnosc_in,                // czujnikami zajmie siê inny modu³ - tu wystarczy sygna³: 0-sprawny, 1-niesprawny
     // licznik
-    input reg licz_in,                      // 0 - stoi, 1 - liczy        
+    input wire licz_in,                      // 0 - stoi, 1 - liczy        
     // sterowanie modu³em monet
     input wire[1:0]cmd_in,                  // odpowiedz na koendê z modu³u odpowedzialnego za monety
+	output reg [4:0] licz_out              // wyjœcie do licznika
     output reg [2:0]cmd_out,                // komenda do modu³u odpowedzialnego za monety
     // sterowanie poszczególnymi etapami parzenia kawy - do zmiany na [2:0]
     output reg kubek,                       // podstawienie kubka
@@ -52,7 +82,7 @@ module mdk_top(
     // pod³¹czamy modu³ sprawnosci
     sprawnosc spr_test(.signal_s(sprawnosc_in));
     // pod³¹czamy modu³ licznika
-    counter licznik(.count_out(licz_in));
+    counter licznik(.count_out(licz_in), .count_in(licz_out));
 
     always @(panel_przyciskow_in)
         #1 begin
@@ -93,3 +123,8 @@ module mdk_top(
                 if (cmd_out == `CMD_RESET && cmd_in == `ODP_NIC) cmd_out <= `CMD_NIC;  // zerowanie linii komend po wstêpnym resecie
             end
 endmodule
+
+    Contact GitHub API Training Shop Blog About 
+
+    © 2017 GitHub, Inc. Terms Privacy Security Status Help 
+
