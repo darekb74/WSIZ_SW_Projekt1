@@ -28,10 +28,10 @@ module mdk_top(
     // czujnik sprawnoœci maszyny 
     input wire sprawnosc_in,                // czujnikami zajmie siê inny modu³ - tu wystarczy sygna³: 0-sprawny, 1-niesprawny
     // licznik
-    input wire licz_in,                      // 0 - stoi, 1 - liczy        
+    input wire licz_in,                     // 0 - stoi, 1 - liczy
+    output reg [4:0] licz_out,              // wyjœcie do licznika        
     // sterowanie modu³em monet
     input wire[1:0]cmd_in,                  // odpowiedz na koendê z modu³u odpowedzialnego za monety
-	output reg [4:0] licz_out              // wyjœcie do licznika
     output reg [2:0]cmd_out,                // komenda do modu³u odpowedzialnego za monety
     // sterowanie poszczególnymi etapami parzenia kawy - do zmiany na [2:0]
     output reg kubek,                       // podstawienie kubka
