@@ -13,7 +13,7 @@ module counter(count_in, count_out, clk);
  
     always @(count_in) 
         begin 
-            if(count_in == 'COUNTER_RESET)
+            if(count_in == `COUNTER_RESET)
                 begin
                     count_out <= 0;
                     count_in <= 0;
@@ -28,7 +28,7 @@ module counter(count_in, count_out, clk);
                         count_out = 1'b1;
                         count_to_0 = 5'b00101;
                     end
-                `DODAJ_WODE: // maszyna wlewa wrzÄ…tek, ma na to 3ns
+                `DODAJ_WODE: // maszyna wlewa wrz¹tek, ma na to 3ns
                     begin
                         count_out = 1'b1;
                         count_to_0 = 5'b00011;                     

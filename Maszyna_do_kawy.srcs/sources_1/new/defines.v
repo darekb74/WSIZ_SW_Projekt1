@@ -26,11 +26,11 @@
     
     // KOMENDY JEDNOBITOWE
     // kubek, kawa. woda, mleko - do zmiany
-    `define STAN_ZEROWY       1'b0
-    `define PODSTAW_KUBEK     1'b1
-    `define DODAJ_WODE        1'b1
-    `define ZMIEL_KAWE        1'b1
-    `define SPIENIAJ_MLEKO    1'b1
+    `define STAN_ZEROWY       5'b00000
+    `define PODSTAW_KUBEK     5'b00011
+    `define DODAJ_WODE        5'b00101
+    `define ZMIEL_KAWE        5'b01100
+    `define SPIENIAJ_MLEKO    5'b00110
         
     // KOMENDY DO MODU£U MONET (OBS£UGA PRZYCISKÓW)
     `define CMD_NIC      3'b000
@@ -56,4 +56,7 @@
     `define z1g00  3'b010        // 1 z³
     `define z2g00  3'b011        // 2 z³
     `define z5g00  3'b100        // 5 z³
+	
+	// reset licznika
+	`define COUNTER_RESET       5'b11111
 `endif

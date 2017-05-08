@@ -27,6 +27,8 @@ module mdk_top(
     input wire [2:0]panel_przyciskow_in,    // przyciski - wybór kawy 
     // czujnik sprawnoœci maszyny 
     input wire sprawnosc_in,                // czujnikami zajmie siê inny modu³ - tu wystarczy sygna³: 0-sprawny, 1-niesprawny
+    // licznik
+    input reg licz_in,                      // 0 - stoi, 1 - liczy        
     // sterowanie modu³em monet
     input wire[1:0]cmd_in,                  // odpowiedz na koendê z modu³u odpowedzialnego za monety
     output reg [2:0]cmd_out,                // komenda do modu³u odpowedzialnego za monety
@@ -49,6 +51,8 @@ module mdk_top(
     modul_monet #(.CENA_OP1(CENA_OP1), .CENA_OP2(CENA_OP2), .CENA_OP3(CENA_OP3)) wrzut_zwrot(.clk(clk), .cmd_in(cmd_out), .cmd_out(cmd_in));
     // pod³¹czamy modu³ sprawnosci
     sprawnosc spr_test(.signal_s(sprawnosc_in));
+    // pod³¹czamy modu³ licznika
+    counter licznik(.count_out(licz_in));
 
     always @(panel_przyciskow_in)
         #1 begin
