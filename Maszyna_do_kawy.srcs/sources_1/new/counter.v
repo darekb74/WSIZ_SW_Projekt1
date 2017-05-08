@@ -10,13 +10,16 @@ module counter(count_in, count_out, clk);
     output reg count_out; 
     
     reg [31:0] count_to_0; //rejestr 32 bitowy
+	
+	// pod³¹czamy modu³ licznika
+    mdk_top main(.count_in(count_in));
  
     always @(count_in) 
         begin 
             if(count_in == `COUNTER_RESET)
                 begin
                     count_out <= 0;
-                    count_in <= 0;
+                    count_to_0 <= 0;
                 end
             case (count_in)
                 `STAN_ZEROWY: // stan zerowy, wyjscie 0
