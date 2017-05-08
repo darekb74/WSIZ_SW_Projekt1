@@ -1,32 +1,3 @@
-
-Skip to content
-This repository
-
-    Pull requests
-    Issues
-    Gist
-
-    @zimour
-
-1
-0
-
-    0
-
-darekb74/WSIZ_SW_Projekt1
-Code
-Issues 0
-Pull requests 0
-Projects 0
-Pulse
-Graphs
-WSIZ_SW_Projekt1/Maszyna_do_kawy.srcs/sources_1/new/mdk.v
-2c30c8c 9 minutes ago
-@zimour zimour zmiany
-@darekb74
-@szymons97
-@zimour
-96 lines (87 sloc) 4.03 KB
 `include "defines.v"
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -123,8 +94,3 @@ module mdk_top(
                 if (cmd_out == `CMD_RESET && cmd_in == `ODP_NIC) cmd_out <= `CMD_NIC;  // zerowanie linii komend po wstêpnym resecie
             end
 endmodule
-
-    Contact GitHub API Training Shop Blog About 
-
-    © 2017 GitHub, Inc. Terms Privacy Security Status Help 
-
