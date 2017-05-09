@@ -57,6 +57,34 @@
     `define z2g00  3'b011        // 2 z³
     `define z5g00  3'b100        // 5 z³
 	
-	// reset licznika
-	`define COUNTER_RESET       5'b11111
+	// KOMENDY LICZNIKA
+    `define LICZNIK_NULL        5'b00000
+    `define ODLICZ_KUBEK        5'b00001
+    `define ODLICZ_KAWA_OP1     5'b00010
+    `define ODLICZ_KAWA_OP2     5'b00011
+    `define ODLICZ_KAWA_OP3     5'b00100
+    `define ODLICZ_WODA_OP1     5'b00101
+    `define ODLICZ_WODA_OP2     5'b00110
+    `define ODLICZ_WODA_OP3     5'b00111
+    `define ODLICZ_MLEKO        5'b01000
+    `define LICZNIK_RESET       5'b11111
+    
+    // ODPOWIEDZI LICZNIKA
+    `define NIC_NIE_ODLICZAM    1'b0
+    `define SKONCZYLEM_ODLICZAC 1'b0
+    `define ODLICZAM            1'b1
+    
+    // CZASY DLA POSZCZEGÓLNYCH OPCJI (w sekundach)
+    // MODU£ PRZELICZY TO NA ODPOWIEDNI¥ LICZBÊ
+    // UWZGLÊDNIAJ¥C CZÊSTOTLIWOŒÆ ZEGARA
+    `define CZAS_KUBEK          2
+    `define CZAS_KAWA_OPCJA1    10
+    `define CZAS_KAWA_OPCJA2    17
+    `define CZAS_KAWA_OPCJA3    8
+    `define CZAS_WODA_OPCJA1    15
+    `define CZAS_WODA_OPCJA2    30
+    `define CZAS_WODA_OPCJA3    25
+    `define CZAS_MLEKO          30
+    
+    
 `endif

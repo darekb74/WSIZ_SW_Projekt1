@@ -1,32 +1,3 @@
-
-Skip to content
-This repository
-
-    Pull requests
-    Issues
-    Gist
-
-    @zimour
-
-1
-0
-
-    0
-
-darekb74/WSIZ_SW_Projekt1
-Code
-Issues 0
-Pull requests 0
-Projects 0
-Pulse
-Graphs
-WSIZ_SW_Projekt1/Maszyna_do_kawy.srcs/sources_1/new/mdk.v
-2c30c8c 9 minutes ago
-@zimour zimour zmiany
-@darekb74
-@szymons97
-@zimour
-96 lines (87 sloc) 4.03 KB
 `include "defines.v"
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -57,10 +28,10 @@ module mdk_top(
     // czujnik sprawnoœci maszyny 
     input wire sprawnosc_in,                // czujnikami zajmie siê inny modu³ - tu wystarczy sygna³: 0-sprawny, 1-niesprawny
     // licznik
-    input wire licz_in,                      // 0 - stoi, 1 - liczy        
+    input wire licz_in,                     // 0 - stoi, 1 - liczy
+    output reg [4:0] licz_out,              // wyjœcie do licznika        
     // sterowanie modu³em monet
     input wire[1:0]cmd_in,                  // odpowiedz na koendê z modu³u odpowedzialnego za monety
-	output reg [4:0] licz_out              // wyjœcie do licznika
     output reg [2:0]cmd_out,                // komenda do modu³u odpowedzialnego za monety
     // sterowanie poszczególnymi etapami parzenia kawy - do zmiany na [2:0]
     output reg kubek,                       // podstawienie kubka
@@ -73,6 +44,8 @@ module mdk_top(
     parameter CENA_OP1 = `m300;				// cena opcji 1 (3.00z³ - expresso)
     parameter CENA_OP2 = `m500;				// cena opcji 2 (5.00z³ - expresso grande :P )
     parameter CENA_OP3 = `m750;				// cena opcji 3 (7.50z³ - cappucino :P )
+    
+    parameter tick_every = 20;              // pozwoli dostosowaæ czasy do zegaru (oraz przyspieszyæ symulacjê ;] )
 
     //reg [4:0]stan;                          // stan maszyny
 
@@ -82,7 +55,7 @@ module mdk_top(
     // pod³¹czamy modu³ sprawnosci
     sprawnosc spr_test(.signal_s(sprawnosc_in));
     // pod³¹czamy modu³ licznika
-    counter licznik(.count_out(licz_in), .count_in(licz_out), .clk(clk));
+    counter #(.tick_every(tick_every)) licznik(.count_out(licz_in), .count_in(licz_out), .clk(clk));
 
     always @(panel_przyciskow_in)
         #1 begin
@@ -93,7 +66,8 @@ module mdk_top(
                     woda = `STAN_ZEROWY;
                     kawa = `STAN_ZEROWY;
                     mleko = `STAN_ZEROWY;
-                    cmd_out = `CMD_RESET;   // resetujemy modu³ monet
+                    cmd_out = `CMD_RESET;       // resetujemy modu³ monet
+                    licz_out = `LICZNIK_RESET;  // resetujemy licznik
                 end
             if (sprawnosc_in == 1'b0) begin     // sterowanie dostêpne tylko w przypadku sprawnej maszyny
                 case (panel_przyciskow_in)
@@ -120,11 +94,10 @@ module mdk_top(
         end
         always @(negedge clk)
             begin
-                if (cmd_out == `CMD_RESET && cmd_in == `ODP_NIC) cmd_out <= `CMD_NIC;  // zerowanie linii komend po wstêpnym resecie
+                if (cmd_out == `CMD_RESET && cmd_in == `ODP_NIC) 
+                    begin
+                        cmd_out <= `CMD_NIC;        // zerowanie linii komend po wstêpnym resecie
+                        licz_out <= `LICZNIK_NULL;  // zerowanie linii komend licznika po wstepnym resecie
+                    end
             end
 endmodule
-
-    Contact GitHub API Training Shop Blog About 
-
-    © 2017 GitHub, Inc. Terms Privacy Security Status Help 
-
