@@ -13,7 +13,7 @@ module counter(count_in, count_out, clk);
     // pozostaje przeliczyæ czasy
     // 1 s = 1 000 000 000 ns
     parameter tick_every = 20; // parametr co ile nastêpuje tick zegara (w ns)
-    reg [31:0]mc = 1000000000/tick_every; // mno¿nik dla czasu w sekundach 
+    integer mc = 1000000000/tick_every; // mno¿nik dla czasu w sekundach 
  
     always @(count_in) 
         begin 

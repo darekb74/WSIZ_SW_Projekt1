@@ -2,7 +2,7 @@
 
 //////////////////////////////////////////////////////////////////////////////////
 // Company: WSIZ Copernicus
-// Engineer: Darek B.
+// Engineer: Rafa³ B., Szymek S., Darek B.
 // 
 // Create Date: 25.04.2017 18:46:49
 // Design Name:  
@@ -33,6 +33,11 @@ module mdk_top(
     // sterowanie modu³em monet
     input wire[1:0]cmd_in,                  // odpowiedz na koendê z modu³u odpowedzialnego za monety
     output reg [2:0]cmd_out,                // komenda do modu³u odpowedzialnego za monety
+    // wyœwietlacz
+    output reg [5:0] number_1,                // segment 1
+    output reg [5:0] number_2,                // segment 2
+    output reg [5:0] number_3,                // segment 3
+    output reg [5:0] number_4,                // segment 4
     // sterowanie poszczególnymi etapami parzenia kawy - do zmiany na [2:0]
     output reg kubek,                       // podstawienie kubka
     output reg woda,                        // w³¹czanie dozowania wody
@@ -56,6 +61,8 @@ module mdk_top(
     sprawnosc spr_test(.signal_s(sprawnosc_in));
     // pod³¹czamy modu³ licznika
     counter #(.tick_every(tick_every)) licznik(.count_out(licz_in), .count_in(licz_out), .clk(clk));
+    // pod³¹czamy modu³ wyœwietlacza
+    wyswietlacz_4x7seg wyswietlacz(.clk(clk), .licz1(number_1), .licz2(number_2), .licz3(number_3), .licz4(number_4));
 
     always @(panel_przyciskow_in)
         #1 begin
@@ -68,6 +75,11 @@ module mdk_top(
                     mleko = `STAN_ZEROWY;
                     cmd_out = `CMD_RESET;       // resetujemy modu³ monet
                     licz_out = `LICZNIK_RESET;  // resetujemy licznik
+                    // reset wyswietlacza
+                    number_1 = 6'b000100;
+                    number_2 = 6'b101010;
+                    number_3 = 6'b000100;
+                    number_4 = 6'b010000;
                 end
             if (sprawnosc_in == 1'b0) begin     // sterowanie dostêpne tylko w przypadku sprawnej maszyny
                 case (panel_przyciskow_in)
