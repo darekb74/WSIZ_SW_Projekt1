@@ -41,8 +41,6 @@ module wyswietlacz_4x7seg(
     output reg seg_dot              // kropka
     );
     
-    reg [3:0]liczba;
-    
     function [7:0]liczbaNAsygnaly;
     input [5:0]liczba;
     reg dot;
