@@ -51,6 +51,18 @@ module test_bench();
     assign uut.spr_test.p_b = bilon;
     assign sprawnosc = uut.spr_test.signal_s;     
    
+    // podgl¹d wyœwietlacza
+    wire [3:0]seg_out;
+    wire seg_dl, seg_dm, seg_dot, seg_dr, seg_mm, seg_ul, seg_um, seg_ur; 
+    assign seg_um = uut.wys_pan.seg_um;
+    assign seg_ul = uut.wys_pan.seg_ul;
+    assign seg_ur = uut.wys_pan.seg_ur;
+    assign seg_mm = uut.wys_pan.seg_mm;
+    assign seg_dl = uut.wys_pan.seg_dl;
+    assign seg_dr = uut.wys_pan.seg_dr;
+    assign seg_dm = uut.wys_pan.seg_dm;
+    assign seg_dot = uut.wys_pan.seg_dot;
+    assign seg_out= uut.wys_pan.segment_out;
     initial 
         begin
             clk = 1'b0;
