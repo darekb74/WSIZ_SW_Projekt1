@@ -26,10 +26,10 @@
 
 module wyswietlacz_4x7seg(
     input wire clk,                 // zegar (nie mniej, ni¿ 250Hz)
-    input wire [4:0] L_1,          // liczba segement 1 (6 bit = kropka)
-    input wire [4:0] L_2,          // liczba segement 2 (6 bit = kropka)
-    input wire [4:0] L_3,          // liczba segement 3 (6 bit = kropka)
-    input wire [4:0] L_4,          // liczba segement 4 (6 bit = kropka)
+    input wire [4:0] L_1,           // liczba segement 1 (6 bit = kropka)
+    input wire [4:0] L_2,           // liczba segement 2 (6 bit = kropka)
+    input wire [4:0] L_3,           // liczba segement 3 (6 bit = kropka)
+    input wire [4:0] L_4,           // liczba segement 4 (6 bit = kropka)
     output reg [3:0] segment_out,   // wskaŸnik wyœwietlanej liczby (0-wyœwietlany, 1-zgaszony)
     output reg seg_um,              // góra, œrodek
     output reg seg_ul,              // góra, lewo
@@ -56,12 +56,13 @@ module wyswietlacz_4x7seg(
                 4'b0111: liczbaNAsygnaly = ~{liczba[4:4],7'b1010010};  // 7
                 4'b1000: liczbaNAsygnaly = ~{liczba[4:4],7'b1111111};  // 8
                 4'b1001: liczbaNAsygnaly = ~{liczba[4:4],7'b1111011};  // 9
-                4'b1010: liczbaNAsygnaly = ~{liczba[4:4],7'b1111110};  // a
-                4'b1011: liczbaNAsygnaly = ~{liczba[4:4],7'b0101111};  // b
-                4'b1100: liczbaNAsygnaly = ~{liczba[4:4],7'b1100101};  // c
-                4'b1101: liczbaNAsygnaly = ~{liczba[4:4],7'b0011111};  // d
-                4'b1110: liczbaNAsygnaly = ~{liczba[4:4],7'b1101101};  // e
-                4'b1111: liczbaNAsygnaly = ~{liczba[4:4],7'b1101100};  // f
+                
+                4'b1010: liczbaNAsygnaly = ~{liczba[4:4],7'b0001000};  // -
+                4'b1011: liczbaNAsygnaly = ~{liczba[4:4],7'b1000000};  // um
+                4'b1100: liczbaNAsygnaly = ~{liczba[4:4],7'b0010000};  // ur
+                4'b1101: liczbaNAsygnaly = ~{liczba[4:4],7'b0001000};  // mm
+                4'b1110: liczbaNAsygnaly = ~{liczba[4:4],7'b0100000};  // ul
+                4'b1111: liczbaNAsygnaly = ~{liczba[4:4],7'b0000000};  // nic
             endcase
          end
     endfunction

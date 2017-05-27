@@ -24,13 +24,18 @@
     `define m950   5'b10011      // 9.50 z³
     `define m1000  5'b10100      // 10.00 z³
     
-    // KOMENDY JEDNOBITOWE
     // kubek, kawa. woda, mleko - do zmiany
     `define STAN_ZEROWY       5'b00000
     `define PODSTAW_KUBEK     5'b00011
     `define DODAJ_WODE        5'b00101
     `define ZMIEL_KAWE        5'b01100
     `define SPIENIAJ_MLEKO    5'b00110
+    
+    // MODU£ TOP - STANY
+    `define CZEKAM              5'b00000
+    `define POBIERAM            5'b00001
+    `define ZWRACAM             5'b00010
+    
         
     // KOMENDY DO MODU£U MONET (OBS£UGA PRZYCISKÓW)
     `define CMD_NIC      3'b000
@@ -78,13 +83,31 @@
     // MODU£ PRZELICZY TO NA ODPOWIEDNI¥ LICZBÊ
     // UWZGLÊDNIAJ¥C CZÊSTOTLIWOŒÆ ZEGARA
     `define CZAS_KUBEK          2
-    `define CZAS_KAWA_OPCJA1    10
-    `define CZAS_KAWA_OPCJA2    17
-    `define CZAS_KAWA_OPCJA3    8
+    `define CZAS_KAWA_OPCJA1    4
+    `define CZAS_KAWA_OPCJA2    6
+    `define CZAS_KAWA_OPCJA3    3
     `define CZAS_WODA_OPCJA1    15
     `define CZAS_WODA_OPCJA2    30
     `define CZAS_WODA_OPCJA3    25
     `define CZAS_MLEKO          30
+    
+    `define W_0             4'b0000 // 0
+    `define W_1             4'b0001 // 1
+    `define W_2             4'b0010 // 2
+    `define W_3             4'b0011 // 3
+    `define W_4             4'b0100 // 4
+    `define W_5             4'b0101 // 5
+    `define W_6             4'b0110 // 6
+    `define W_7             4'b0111 // 7
+    `define W_8             4'b1000 // 8
+    `define W_9             4'b1001 // 9
+                    
+    `define W_MM            4'b1010 // mm
+    `define W_UM            4'b1011 // um
+    `define W_UR            4'b1100 // ur
+    `define W_UL            4'b1101 // ul
+    `define W_DM            4'b1110 // dm
+    `define W_NULL          4'b1111 // nic
     
     
 `endif

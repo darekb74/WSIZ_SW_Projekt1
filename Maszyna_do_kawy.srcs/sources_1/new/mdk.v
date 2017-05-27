@@ -64,11 +64,15 @@ module mdk_top(
     // pod³¹czamy modu³ wyœwietlacza
     wyswietlacz_4x7seg wys_pan(.clk(clk), .L_1(L_1), .L_2(L_2), .L_3(L_3), .L_4(L_4));
 
+    reg [5:0]stan_top, stan_n;
+    
     always @(panel_przyciskow_in)
         #1 begin
             if (panel_przyciskow_in == `CMD_RESET && cmd_in === 2'bXX) // automat nic nie robi - reset pocz¹tkowy
                 begin
                     // ustawienia poczatkowe
+                    stan_top = 0;
+                    stan_n = 0;
                     kubek = `STAN_ZEROWY;
                     woda = `STAN_ZEROWY;
                     kawa = `STAN_ZEROWY;
@@ -76,40 +80,83 @@ module mdk_top(
                     cmd_out = `CMD_RESET;       // resetujemy modu³ monet
                     licz_out = `LICZNIK_RESET;  // resetujemy licznik
                     // reset wyswietlacza
-                    L_1 = 5'b00100;
-                    L_2 = 5'b11010;
-                    L_3 = 5'b00100;
-                    L_4 = 5'b01001;
+                    L_1 = 5'b00000;
+                    L_2 = 5'b00000;
+                    L_3 = 5'b00000;
+                    L_4 = 5'b00000;
                 end
             if (sprawnosc_in == 1'b0) begin     // sterowanie dostêpne tylko w przypadku sprawnej maszyny
                 case (panel_przyciskow_in)
                     `CMD_OP1: // wciœniêto przycisk wyboru opcji 1
                         if(cmd_in == `ODP_NIC)   // jeœli modu³ nic nie robi
-                            cmd_out = `CMD_OP1; // rozpoczynamy pobór monet
+                            begin
+                                cmd_out = `CMD_OP1; // rozpoczynamy pobór monet
+                                stan_n = `POBIERAM;
+                            end
                     `CMD_OP2: // wciœniêto przycisk wyboru opcji 2
                         if(cmd_in == `ODP_NIC)   // jeœli modu³ nic nie robi
-                            cmd_out = `CMD_OP2; // rozpoczynamy pobór monet
+                            begin
+                                cmd_out = `CMD_OP2; // rozpoczynamy pobór monet
+                                stan_n = `POBIERAM;
+                            end
                     `CMD_OP3: // wciœniêto przycisk wyboru opcji 3
                         if(cmd_in == `ODP_NIC)   // jeœli modu³ nic nie robi
-                            cmd_out = `CMD_OP3; // rozpoczynamy pobór monet
+                            begin
+                                cmd_out = `CMD_OP3; // rozpoczynamy pobór monet
+                                stan_n = `POBIERAM;
+                            end
                     `CMD_RESET:
                         case(cmd_out)
                             `CMD_OP1:
-                                cmd_out = `CMD_RESET1;
+                                begin
+                                    cmd_out = `CMD_RESET1;
+                                    stan_n = `ZWRACAM;
+                                end
                             `CMD_OP2:
-                                cmd_out = `CMD_RESET2;
+                                begin
+                                    cmd_out = `CMD_RESET2;
+                                    stan_n = `ZWRACAM;
+                                end
                             `CMD_OP3:
-                                cmd_out = `CMD_RESET3;
+                                begin
+                                    cmd_out = `CMD_RESET3;
+                                    stan_n = `ZWRACAM;
+                                end
                         endcase
                 endcase
             end
         end
+        always @(posedge clk)  // g³owna czêœæ
+            begin
+                stan_n <= stan_top;
+                case (stan_top)
+                    `CZEKAM:     
+                        begin // NIC SIE NIE DZIEJE - PUSTY WYSWIETLACZ
+                            {L_1,L_2,L_3,L_4} <= {1'b0,`W_NULL,1'b0,`W_NULL,1'b0,`W_NULL,1'b0,`W_NULL};
+                        end
+                    `POBIERAM:   // pobieram op³atê
+                        begin
+                            stan_n <= `POBIERAM;
+                        end
+                    `ZWRACAM:
+                        begin
+                            case (L_1) // WIRUJ¥CE OKRÊGI NA WYŒWIETLACZU - ZWROT PIENIÊDZY
+                                default: {L_1,L_2,L_3,L_4} <= {1'b0,`W_UM,1'b0,`W_MM,1'b0,`W_UM,1'b0,`W_MM}; 
+                                `W_UM: {L_1,L_2,L_3,L_4} <= {1'b0,`W_UL,1'b0,`W_UR,1'b0,`W_UL,1'b0,`W_UR};
+                                `W_UL: {L_1,L_2,L_3,L_4} <= {1'b0,`W_MM,1'b0,`W_UM,1'b0,`W_MM,1'b0,`W_UM};
+                                `W_MM: {L_1,L_2,L_3,L_4} <= {1'b0,`W_UR,1'b0,`W_UL,1'b0,`W_UR,1'b0,`W_UL};
+                            endcase
+                        end
+                        
+                endcase
+            end
         always @(negedge clk)
             begin
-                if (cmd_out == `CMD_RESET && cmd_in == `ODP_NIC) 
+                if ((cmd_out == `CMD_RESET || cmd_out == `CMD_RESET1 || cmd_out == `CMD_RESET2 || cmd_out == `CMD_RESET3) && cmd_in == `ODP_NIC) 
                     begin
                         cmd_out <= `CMD_NIC;        // zerowanie linii komend po wstêpnym resecie
                         licz_out <= `LICZNIK_NULL;  // zerowanie linii komend licznika po wstepnym resecie
                     end
+                stan_top <= stan_n;
             end
 endmodule
