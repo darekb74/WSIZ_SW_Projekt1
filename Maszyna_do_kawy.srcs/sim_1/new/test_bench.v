@@ -32,6 +32,9 @@ module test_bench();
 
     // pod³¹czamy modu³ g³ówny
     mdk_top #(.CENA_OP1(CENA_OP1), .CENA_OP2(CENA_OP2), .CENA_OP3(CENA_OP3)) uut(.clk(clk), .panel_przyciskow_in(panel_przyciskow));
+    // podgl¹d zegara dzielnika
+    wire clk_div;
+    assign clk_div = mdk_top.clk_div;
     
     // sterowanie i podgl¹d modu³u monet
     reg [2:0]monety_in;
@@ -63,6 +66,9 @@ module test_bench();
     assign seg_dm = uut.wys_pan.seg_dm;
     assign seg_dot = uut.wys_pan.seg_dot;
     assign seg_out= uut.wys_pan.segment_out;
+    
+    
+    
     initial 
         begin
             clk = 1'b0;
@@ -75,22 +81,22 @@ module test_bench();
             bilon <= 1'b0;
             monety_in = `z0g00;
             // zaczynamy
-            #50 monety_in <= `z0g50;             // wrzucamy 50 groszy
-            #50 monety_in <= `z1g00;             // wrzucamy 1 z³
-            #50 monety_in <= `z2g00;             // wrzucamy 2 z³
-            #50 monety_in <= `z5g00;             // wrzucamy 5 z³
-            #50 panel_przyciskow <= `CMD_OP1;    // wybieramy opcjê nr 1
-            #50 panel_przyciskow <= `CMD_OP2;    // wybieramy opcjê nr 2 (bez resetu)
-            #50 monety_in <= `z2g00;             // wrzucamy 2 z³
-            #50 monety_in <= `z0g50;             // wrzucamy 50 gr
-            #50 panel_przyciskow = `CMD_RESET;   // reset 
-            #10 monety_in <= `z5g00;             // wrzucamy 5 z³
+            #200 monety_in <= `z0g50;             // wrzucamy 50 groszy
+            #200 monety_in <= `z1g00;             // wrzucamy 1 z³
+            #200 monety_in <= `z2g00;             // wrzucamy 2 z³
+            #200 monety_in <= `z5g00;             // wrzucamy 5 z³
+            #200 panel_przyciskow <= `CMD_OP1;    // wybieramy opcjê nr 1
+            #200 panel_przyciskow <= `CMD_OP2;    // wybieramy opcjê nr 2 (bez resetu)
+            #200 monety_in <= `z2g00;             // wrzucamy 2 z³
+            #200 monety_in <= `z0g50;             // wrzucamy 50 gr
+            #200 panel_przyciskow = `CMD_RESET;   // reset 
+            #40 monety_in <= `z5g00;             // wrzucamy 5 z³
 
             
         end
     always
         begin
-            #10 // 50MHz
+            #10 // 50kHz
                 begin
                     clk <= ~clk;        // zegar - tick
                 end
@@ -98,9 +104,9 @@ module test_bench();
      always @(clk)
         begin
             if (monety_in != `z0g00)
-               #20 monety_in <= `z0g00;              // moneta wpad³a wiêc zerujemy sygna³
+               #80 monety_in <= `z0g00;              // moneta wpad³a wiêc zerujemy sygna³
             if (panel_przyciskow != 1'b0)
-               #20 panel_przyciskow <= `CMD_NIC;     // wciœniêto przycisk wiêc zerujemy
+               #80 panel_przyciskow <= `CMD_NIC;     // wciœniêto przycisk wiêc zerujemy
         end
     
 endmodule

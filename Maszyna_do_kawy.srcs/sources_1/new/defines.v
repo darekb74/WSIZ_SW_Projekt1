@@ -1,6 +1,6 @@
 `ifndef MY_DEFINES_SV
 `define MY_DEFINES_SV
-    `timescale 1ns / 1ps
+    `timescale 1us / 1ns
     // stany (pootrzebne do ustalenia CEN)
     `define NIC    5'b00000      // bezczynnosc
     `define m050   5'b00001      // 50 groszy

@@ -23,6 +23,7 @@
 
 module mdk_top(
     input wire clk,                         // zegar
+    input wire clk_div,                     // zegar z dzielnika czêstotliwoœci
     // sygna³ z przycisków
     input wire [2:0]panel_przyciskow_in,    // przyciski - wybór kawy 
     // czujnik sprawnoœci maszyny 
@@ -56,13 +57,15 @@ module mdk_top(
 
     // ³¹czymy modu³y
     // pod³¹czamy modu³ monet
-    modul_monet #(.CENA_OP1(CENA_OP1), .CENA_OP2(CENA_OP2), .CENA_OP3(CENA_OP3)) wrzut_zwrot(.clk(clk), .cmd_in(cmd_out), .cmd_out(cmd_in));
+    modul_monet #(.CENA_OP1(CENA_OP1), .CENA_OP2(CENA_OP2), .CENA_OP3(CENA_OP3)) wrzut_zwrot(.clk(clk_div), .cmd_in(cmd_out), .cmd_out(cmd_in));
     // pod³¹czamy modu³ sprawnosci
     sprawnosc spr_test(.signal_s(sprawnosc_in));
     // pod³¹czamy modu³ licznika
-    counter #(.tick_every(tick_every)) licznik(.count_out(licz_in), .count_in(licz_out), .clk(clk));
+    counter #(.tick_every(tick_every)) licznik(.count_out(licz_in), .count_in(licz_out), .clk(clk_div));
     // pod³¹czamy modu³ wyœwietlacza
-    wyswietlacz_4x7seg wys_pan(.clk(clk), .L_1(L_1), .L_2(L_2), .L_3(L_3), .L_4(L_4));
+    wyswietlacz_4x7seg wys_pan(.clk(clk_div), .L_1(L_1), .L_2(L_2), .L_3(L_3), .L_4(L_4));
+    // pod³¹czamy dzielnik czêstotliwoœci
+    divider #(1) div(.clk(clk), .clk_div(clk_div));
 
     reg [5:0]stan_top, stan_n;
     
@@ -125,6 +128,7 @@ module mdk_top(
                         endcase
                 endcase
             end
+            stan_top <= stan_n;
         end
         always @(posedge clk)  // g³owna czêœæ
             begin
@@ -150,7 +154,7 @@ module mdk_top(
                         
                 endcase
             end
-        always @(negedge clk)
+        always @(negedge clk_div)
             begin
                 if ((cmd_out == `CMD_RESET || cmd_out == `CMD_RESET1 || cmd_out == `CMD_RESET2 || cmd_out == `CMD_RESET3) && cmd_in == `ODP_NIC) 
                     begin
