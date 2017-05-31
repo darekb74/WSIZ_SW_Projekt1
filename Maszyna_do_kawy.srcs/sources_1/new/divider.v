@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
+// Company: WSIZ Copernicus
+// Engineer: Darek B.
 // 
 // Create Date: 31.05.2017 15:40:43
 // Design Name: 
@@ -9,7 +9,7 @@
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
-// Description: 
+// Description: Podzielnik czêstotliwoœci.
 // 
 // Dependencies: 
 // 
@@ -25,7 +25,7 @@ module divider(
     output reg clk_div
     );
     
-    parameter div = 3;
+    parameter div = 1;
     
     reg [div:0] c = 0;
     

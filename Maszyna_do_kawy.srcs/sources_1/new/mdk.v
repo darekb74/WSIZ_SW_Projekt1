@@ -33,6 +33,7 @@ module mdk_top(
     output reg [4:0] licz_out,              // wyjœcie do licznika        
     // sterowanie modu³em monet
     input wire[1:0]cmd_in,                  // odpowiedz na koendê z modu³u odpowedzialnego za monety
+    input wire[4:0]stan_mm,                 // potrzebne do obs³ugi wyœwietlacza
     output reg [2:0]cmd_out,                // komenda do modu³u odpowedzialnego za monety
     // wyœwietlacz
     output reg [4:0] L_1,                // segment 1
@@ -57,7 +58,7 @@ module mdk_top(
 
     // ³¹czymy modu³y
     // pod³¹czamy modu³ monet
-    modul_monet #(.CENA_OP1(CENA_OP1), .CENA_OP2(CENA_OP2), .CENA_OP3(CENA_OP3)) wrzut_zwrot(.clk(clk_div), .cmd_in(cmd_out), .cmd_out(cmd_in));
+    modul_monet #(.CENA_OP1(CENA_OP1), .CENA_OP2(CENA_OP2), .CENA_OP3(CENA_OP3)) wrzut_zwrot(.clk(clk_div), .cmd_in(cmd_out), .cmd_out(cmd_in), .stan_mm(stan_mm));
     // pod³¹czamy modu³ sprawnosci
     sprawnosc spr_test(.signal_s(sprawnosc_in));
     // pod³¹czamy modu³ licznika
@@ -68,6 +69,35 @@ module mdk_top(
     divider #(1) div(.clk(clk), .clk_div(clk_div));
 
     reg [5:0]stan_top, stan_n;
+    
+    function [19:0]stanNaLiczby;
+        input [4:0]stan_mm;
+        begin
+            case(stan_mm)
+                `NIC:   stanNaLiczby = {1'b0,`W_0,1'b1,`W_0,1'b0,`W_0,1'b0,`W_0};
+                `m050:  stanNaLiczby = {1'b0,`W_0,1'b1,`W_0,1'b0,`W_5,1'b0,`W_0};
+                `m100:  stanNaLiczby = {1'b0,`W_0,1'b1,`W_1,1'b0,`W_0,1'b0,`W_0};
+                `m150:  stanNaLiczby = {1'b0,`W_0,1'b1,`W_1,1'b0,`W_5,1'b0,`W_0};
+                `m200:  stanNaLiczby = {1'b0,`W_0,1'b1,`W_2,1'b0,`W_0,1'b0,`W_0};
+                `m250:  stanNaLiczby = {1'b0,`W_0,1'b1,`W_2,1'b0,`W_5,1'b0,`W_0};
+                `m300:  stanNaLiczby = {1'b0,`W_0,1'b1,`W_3,1'b0,`W_0,1'b0,`W_0};
+                `m350:  stanNaLiczby = {1'b0,`W_0,1'b1,`W_3,1'b0,`W_5,1'b0,`W_0};
+                `m400:  stanNaLiczby = {1'b0,`W_0,1'b1,`W_4,1'b0,`W_0,1'b0,`W_0};
+                `m450:  stanNaLiczby = {1'b0,`W_0,1'b1,`W_4,1'b0,`W_5,1'b0,`W_0};
+                `m500:  stanNaLiczby = {1'b0,`W_0,1'b1,`W_5,1'b0,`W_0,1'b0,`W_0};
+                `m550:  stanNaLiczby = {1'b0,`W_0,1'b1,`W_5,1'b0,`W_5,1'b0,`W_0};
+                `m600:  stanNaLiczby = {1'b0,`W_0,1'b1,`W_6,1'b0,`W_0,1'b0,`W_0};
+                `m650:  stanNaLiczby = {1'b0,`W_0,1'b1,`W_6,1'b0,`W_5,1'b0,`W_0};
+                `m700:  stanNaLiczby = {1'b0,`W_0,1'b1,`W_7,1'b0,`W_0,1'b0,`W_0};
+                `m750:  stanNaLiczby = {1'b0,`W_0,1'b1,`W_7,1'b0,`W_5,1'b0,`W_0};
+                `m800:  stanNaLiczby = {1'b0,`W_0,1'b1,`W_8,1'b0,`W_0,1'b0,`W_0};
+                `m850:  stanNaLiczby = {1'b0,`W_0,1'b1,`W_8,1'b0,`W_5,1'b0,`W_0};
+                `m900:  stanNaLiczby = {1'b0,`W_0,1'b1,`W_9,1'b0,`W_0,1'b0,`W_0};
+                `m950:  stanNaLiczby = {1'b0,`W_0,1'b1,`W_9,1'b0,`W_5,1'b0,`W_0};
+                `m1000:  stanNaLiczby = {1'b0,`W_1,1'b1,`W_0,1'b0,`W_0,1'b0,`W_0};
+            endcase
+        end
+    endfunction
     
     always @(panel_przyciskow_in)
         #1 begin
@@ -140,7 +170,7 @@ module mdk_top(
                         end
                     `POBIERAM:   // pobieram op³atê
                         begin
-                            stan_n <= `POBIERAM;
+                            {L_1,L_2,L_3,L_4} <= stanNaLiczby(stan_mm);
                         end
                     `ZWRACAM:
                         begin

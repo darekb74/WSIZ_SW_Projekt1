@@ -54,7 +54,8 @@ module modul_monet(
     input wire [2:0] mon_in,            // wrzut monet
     output reg [2:0] mon_out,           // zwrot monet
     input wire [2:0] cmd_in,            // komenda: 0-nic,  1- zakup opcja1, 2- zakup opcja2, 3-zakup opcja3, 4-reset (pe³en zwrot)
-    output reg [1:0] cmd_out            // odpowiedŸ na komendê
+    output reg [1:0] cmd_out,           // odpowiedŸ na komendê
+    output wire [4:0] stan_mm           // przekazujemy stan - potrzebne do obs³ugi wyœwietlacza
     );
     
   
@@ -66,6 +67,7 @@ module modul_monet(
     reg [4:0]n_stan;                       // nastêpny stan
     reg [4:0]tmp;                          // zmienna tymczasowa potrzebna do obliczeñ
 
+    assign stan_mm = stan;
     always @(cmd_in) // otrzymaliœmy komendê
         begin
             n_stan = stan;  // przepisujemy stan do n_stan - potrzebne w przypadku, gdyby stan nie uleg³ zmianie (pêtelka)
