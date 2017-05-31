@@ -63,7 +63,7 @@ module mdk_top(
     // pod³¹czamy modu³ licznika
     counter #(.tick_every(tick_every)) licznik(.count_out(licz_in), .count_in(licz_out), .clk(clk_div));
     // pod³¹czamy modu³ wyœwietlacza
-    wyswietlacz_4x7seg wys_pan(.clk(clk_div), .L_1(L_1), .L_2(L_2), .L_3(L_3), .L_4(L_4));
+    wyswietlacz_4x7seg wys_pan(.clk(clk), .L_1(L_1), .L_2(L_2), .L_3(L_3), .L_4(L_4));
     // pod³¹czamy dzielnik czêstotliwoœci
     divider #(1) div(.clk(clk), .clk_div(clk_div));
 
@@ -130,7 +130,7 @@ module mdk_top(
             end
             stan_top <= stan_n;
         end
-        always @(posedge clk)  // g³owna czêœæ
+        always @(posedge clk_div)  // g³owna czêœæ
             begin
                 stan_n <= stan_top;
                 case (stan_top)
