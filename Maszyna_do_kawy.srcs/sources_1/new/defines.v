@@ -1,7 +1,7 @@
 `ifndef MY_DEFINES_SV
 `define MY_DEFINES_SV
     `timescale 1us / 1ns
-    // stany (pootrzebne do ustalenia CEN)
+    // stany modu³u monet
     `define NIC    5'b00000      // bezczynnosc
     `define m050   5'b00001      // 50 groszy
     `define m100   5'b00010      // 1 z³
@@ -24,19 +24,17 @@
     `define m950   5'b10011      // 9.50 z³
     `define m1000  5'b10100      // 10.00 z³
     
-    // kubek, kawa. woda, mleko - do zmiany
-    `define STAN_ZEROWY       5'b00000
-    `define PODSTAW_KUBEK     5'b00011
-    `define DODAJ_WODE        5'b00101
-    `define ZMIEL_KAWE        5'b01100
-    `define SPIENIAJ_MLEKO    5'b00110
-    
     // MODU£ TOP - STANY
     `define CZEKAM              5'b00000
     `define POBIERAM            5'b00001
     `define ZWRACAM             5'b00010
-    
-        
+    `define PODSTAW_KUBEK       5'b00011
+    `define ZMIEL_KAWE          5'b00100
+    `define DODAJ_WODE          5'b00101
+    `define SPIENIAJ_MLEKO      5'b00110
+    `define NAPELNIJ_PRZEWODY   5'b00111
+    `define CZYSC_MASZYNE       5'b01000
+       
     // KOMENDY DO MODU£U MONET (OBS£UGA PRZYCISKÓW)
     `define CMD_NIC      3'b000
     `define CMD_OP1      3'b001
@@ -72,6 +70,8 @@
     `define ODLICZ_WODA_OP2     5'b00110
     `define ODLICZ_WODA_OP3     5'b00111
     `define ODLICZ_MLEKO        5'b01000
+    `define ODLICZ_NAPELN       5'b01001
+    `define ODLICZ_CZYSC        5'b01010
     `define LICZNIK_RESET       5'b11111
     
     // ODPOWIEDZI LICZNIKA
@@ -90,6 +90,8 @@
     `define CZAS_WODA_OPCJA2    30
     `define CZAS_WODA_OPCJA3    25
     `define CZAS_MLEKO          30
+    `define CZAS_NAPELN         3
+    `define CZAS_CZYSC          5
     
     `define W_0             4'b0000 // 0
     `define W_1             4'b0001 // 1
