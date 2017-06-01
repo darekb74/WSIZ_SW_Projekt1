@@ -79,7 +79,9 @@ module test_bench();
     
     // podgl¹d licznika
     wire [6:0] count_secs;
+    wire count_out;
     assign count_secs = uut.licznik.count_secs; 
+    assign count_out = uut.licznik.count_out;
     
     
     
@@ -106,10 +108,11 @@ module test_bench();
             #(tick_every*10) panel_przyciskow = `CMD_RESET;   // reset 
             #(tick_every*2) monety_in <= `z5g00;              // wrzucamy 5 z³
             // ok, teraz zrtobimy kawkê
-            #(tick_every*30) panel_przyciskow <= `CMD_OP1;    // wybieramy opcjê nr 1
+            #(tick_every*30) panel_przyciskow <= `CMD_OP3;    // wybieramy opcjê nr 3
             #(tick_every*10) monety_in <= `z2g00;             // wrzucamy 2 z³
             #(tick_every*10) monety_in <= `z0g50;             // wrzucamy 50 gr
             #(tick_every*10) monety_in <= `z2g00;             // wrzucamy 2 z³
+            #(tick_every*10) monety_in <= `z5g00;             // wrzucamy 5 z³
             
         end
     always

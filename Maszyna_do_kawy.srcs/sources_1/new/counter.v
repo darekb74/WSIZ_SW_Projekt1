@@ -23,12 +23,12 @@ module counter(clk, count_in, count_out, count_secs);
  
     always @(count_in) 
         begin 
-            if(count_in == `LICZNIK_RESET)  // reset licznika
-                begin
-                    count_out <= `NIC_NIE_ODLICZAM;
-                    count_to_0 <= 0;
-                end
             case (count_in)
+                `LICZNIK_RESET: // reset licznika
+                    begin
+                        count_out <= `NIC_NIE_ODLICZAM;
+                        count_to_0 <= 0;
+                    end
                 `LICZNIK_NULL: // stan zerowy, wyjscie 0
                     begin
                         //count_out = `NIC_NIE_ODLICZAM; <- to by resetowa³o licznik - niepotrzebne
@@ -75,8 +75,8 @@ module counter(clk, count_in, count_out, count_secs);
                     end
                 `ODLICZ_NAPELN:     // maszyna wype³nia przewody wod¹         
                     begin
-                        count_out = `ODLICZAM;
-                        count_to_0 = `CZAS_NAPELN*mc;
+                        count_out <= `ODLICZAM;
+                        count_to_0 <= `CZAS_NAPELN*mc;
                     end
                 `ODLICZ_CZYSC:      // maszyna usuwa zu¿yt¹ kawê, czyœci instalacjê, usuwa wodê z przewodów 
                     begin
@@ -89,7 +89,7 @@ module counter(clk, count_in, count_out, count_secs);
     
     always @(negedge clk) // odliczanie do 0
         begin
-            if(count_out == 1 && count_to_0 > 0)
+            if(count_out == `ODLICZAM && count_to_0 > 0)
                 count_to_0 <= count_to_0 - 1;
             else
                 count_out <= `SKONCZYLEM_ODLICZAC; // skoñczyliœmy odliczaæ    

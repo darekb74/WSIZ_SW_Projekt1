@@ -73,11 +73,12 @@ module mdk_top(
     
     function [9:0]licznikNaLiczby;
         input reg [6:0] count_secs;
-        reg [5:0]t,a,b;
+        integer a,b;
         begin
             b = count_secs / 10;
             a = count_secs - (b*10);
-            licznikNaLiczby = {b,a};
+            licznikNaLiczby = {b[4:0],a[4:0]};
+            $strobe("strobe  count_secs:%b(%0d) a:%b(%0d) b:%b(%0d) @ %0t", count_secs, count_secs, b[4:0], b[4:0], a[4:0], a[4:0], $time);
         end
     endfunction 
     
@@ -140,6 +141,56 @@ module mdk_top(
             end
             stan_top <= stan_n;
         end
+        always @(licz_in)
+            begin
+                if (licz_in == `SKONCZYLEM_ODLICZAC)
+                    begin
+                        case (stan_top)
+                            `NAPELNIJ_PRZEWODY: begin stan_n = `PODSTAW_KUBEK; licz_out <= `ODLICZ_KUBEK; urzadzenia <= `CMD_PODSTAW_KUBEK; end
+                            `PODSTAW_KUBEK: 
+                                begin
+                                    stan_n = `ZMIEL_KAWE;
+                                    case(cmd_out)
+                                        `CMD_OP1: begin licz_out <= `ODLICZ_KAWA_OP1; end
+                                        `CMD_OP2: begin licz_out <= `ODLICZ_KAWA_OP2; end
+                                        `CMD_OP3: begin licz_out <= `ODLICZ_KAWA_OP3; end
+                                    endcase
+                                    urzadzenia <= `CMD_ZMIEL_KAWE;
+                                end
+                            `ZMIEL_KAWE:
+                                begin
+                                    stan_n = `DODAJ_WODE;
+                                    case(cmd_out)
+                                        `CMD_OP1: begin licz_out <= `ODLICZ_WODA_OP1; end
+                                        `CMD_OP2: begin licz_out <= `ODLICZ_WODA_OP2; end
+                                        `CMD_OP3: begin licz_out <= `ODLICZ_WODA_OP3; end
+                                    endcase
+                                    urzadzenia <= `CMD_DODAJ_WODE;
+                                end
+                            `DODAJ_WODE:
+                                begin
+                                    case(cmd_out)
+                                        `CMD_OP1: begin stan_n = `CZYSC_MASZYNE; licz_out <= `ODLICZ_CZYSC; urzadzenia <= `CMD_CZYSC_MASZYNE; end
+                                        `CMD_OP2: begin stan_n = `CZYSC_MASZYNE; licz_out <= `ODLICZ_CZYSC; urzadzenia <= `CMD_CZYSC_MASZYNE; end
+                                        `CMD_OP3: begin stan_n = `SPIENIAJ_MLEKO; licz_out <= `ODLICZ_MLEKO; urzadzenia <= `CMD_SPIENIAJ_MLEKO; end
+                                    endcase
+                                end
+                            `SPIENIAJ_MLEKO:
+                                begin
+                                    stan_n = `CZYSC_MASZYNE;
+                                    licz_out <= `ODLICZ_CZYSC;
+                                    urzadzenia <= `CMD_CZYSC_MASZYNE;
+                                end
+                            `CZYSC_MASZYNE:
+                                begin
+                                    stan_n = `CZEKAM;
+                                    licz_out <= `LICZNIK_NULL;
+                                    urzadzenia <= `CMD_ZERO;
+                                end
+                        endcase
+                    end
+                stan_top <= stan_n;       
+            end
         always @(cmd_in) // odpowiedŸ z modu³u monet
             begin
                 stan_n = stan_top;
@@ -150,6 +201,7 @@ module mdk_top(
                                 begin 
                                     stan_n <= `NAPELNIJ_PRZEWODY;
                                     licz_out <= `ODLICZ_NAPELN;
+                                    urzadzenia <= `CMD_NAPELNIJ_PRZEWODY;
                                 end
                         end
                 endcase

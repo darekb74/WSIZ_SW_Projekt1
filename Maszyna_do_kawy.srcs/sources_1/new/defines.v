@@ -34,6 +34,16 @@
     `define SPIENIAJ_MLEKO      5'b00110
     `define NAPELNIJ_PRZEWODY   5'b00111
     `define CZYSC_MASZYNE       5'b01000
+    
+    //STEROWANIE URZDZENIAMI
+    `define CMD_ZERO                3'b000
+    `define CMD_PODSTAW_KUBEK       3'b001
+    `define CMD_ZMIEL_KAWE          3'b010
+    `define CMD_DODAJ_WODE          3'b100
+    `define CMD_SPIENIAJ_MLEKO      3'b101
+    `define CMD_NAPELNIJ_PRZEWODY   3'b110
+    `define CMD_CZYSC_MASZYNE       3'b111
+        
        
     // KOMENDY DO MODU£U MONET (OBS£UGA PRZYCISKÓW)
     `define CMD_NIC      3'b000
@@ -85,10 +95,10 @@
     `define CZAS_KUBEK          2
     `define CZAS_KAWA_OPCJA1    4
     `define CZAS_KAWA_OPCJA2    6
-    `define CZAS_KAWA_OPCJA3    3
+    `define CZAS_KAWA_OPCJA3    4
     `define CZAS_WODA_OPCJA1    15
     `define CZAS_WODA_OPCJA2    30
-    `define CZAS_WODA_OPCJA3    25
+    `define CZAS_WODA_OPCJA3    20
     `define CZAS_MLEKO          30
     `define CZAS_NAPELN         3
     `define CZAS_CZYSC          5
