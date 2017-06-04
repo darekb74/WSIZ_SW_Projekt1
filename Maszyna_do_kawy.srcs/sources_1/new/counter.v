@@ -6,7 +6,7 @@
 module counter(clk, count_in, count_out, count_secs);
 
     input clk; 
-    input [4:0] count_in;
+    input [3:0] count_in;
     output reg count_out;
     output wire [6:0]count_secs; // przekazanie pozosta³ego czasu (w sekundach) do modu³u g³ownego
                                  // potrzebna do wyœwietlacza - 7 bit = max 127 sek (wystarczy)
@@ -28,10 +28,6 @@ module counter(clk, count_in, count_out, count_secs);
                     begin
                         count_out <= `NIC_NIE_ODLICZAM;
                         count_to_0 <= 0;
-                    end
-                `LICZNIK_NULL: // stan zerowy, wyjscie 0
-                    begin
-                        //count_out = `NIC_NIE_ODLICZAM; <- to by resetowa³o licznik - niepotrzebne
                     end
                 `ODLICZ_KUBEK:      // maszyna podstawia kubek
                     begin

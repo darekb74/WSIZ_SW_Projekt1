@@ -32,7 +32,7 @@ module test_bench();
     
     parameter tick_every = 20;               // w³aœciwie nie nale¿y zmieniaæ - regulacja czêstotliwoœci maszyny
                                              // aktualnie: (1 000 000 us / 20 us) cykli/s = 50 000 Hz = 50 kHz
-    parameter speed_up = 50000;                  // zwiêkszenie spowoduje przyspieszenie licznika (tylko licznika)
+    parameter speed_up = 50000;              // zwiêkszenie spowoduje przyspieszenie licznika (tylko licznika)
                                              // ustawienie na 50 000 spowoduje przyspieszenia licznika do wartoœci:
                                              // 1 cykl = 1 sek (pomocne w symulacji)
 
@@ -40,7 +40,7 @@ module test_bench();
     mdk_top #(.CENA_OP1(CENA_OP1), .CENA_OP2(CENA_OP2), .CENA_OP3(CENA_OP3), .tick_every(tick_every*speed_up)) uut(.clk(clk), .panel_przyciskow_in(panel_przyciskow));
     // podgl¹d zegara dzielnika oraz stanu modu³u g³ównego
     wire clk_div;
-    wire [5:0]stan_top;
+    wire [3:0]stan_top;
     assign clk_div = mdk_top.clk_div;
     assign stan_top = mdk_top.stan_top;
     

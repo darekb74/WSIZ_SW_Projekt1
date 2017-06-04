@@ -25,15 +25,15 @@
     `define m1000  5'b10100      // 10.00 z³
     
     // MODU£ TOP - STANY
-    `define CZEKAM              5'b00000
-    `define POBIERAM            5'b00001
-    `define ZWRACAM             5'b00010
-    `define PODSTAW_KUBEK       5'b00011
-    `define ZMIEL_KAWE          5'b00100
-    `define DODAJ_WODE          5'b00101
-    `define SPIENIAJ_MLEKO      5'b00110
-    `define NAPELNIJ_PRZEWODY   5'b00111
-    `define CZYSC_MASZYNE       5'b01000
+    `define CZEKAM              4'b0000
+    `define POBIERAM            4'b0001
+    `define ZWRACAM             4'b0010
+    `define PODSTAW_KUBEK       4'b0011
+    `define ZMIEL_KAWE          4'b0100
+    `define DODAJ_WODE          4'b0101
+    `define SPIENIAJ_MLEKO      4'b0110
+    `define NAPELNIJ_PRZEWODY   4'b0111
+    `define CZYSC_MASZYNE       4'b1000
     
     //STEROWANIE URZDZENIAMI
     `define CMD_ZERO                3'b000
@@ -71,18 +71,18 @@
     `define z5g00  3'b100        // 5 z³
 	
 	// KOMENDY LICZNIKA
-    `define LICZNIK_NULL        5'b00000
-    `define ODLICZ_KUBEK        5'b00001
-    `define ODLICZ_KAWA_OP1     5'b00010
-    `define ODLICZ_KAWA_OP2     5'b00011
-    `define ODLICZ_KAWA_OP3     5'b00100
-    `define ODLICZ_WODA_OP1     5'b00101
-    `define ODLICZ_WODA_OP2     5'b00110
-    `define ODLICZ_WODA_OP3     5'b00111
-    `define ODLICZ_MLEKO        5'b01000
-    `define ODLICZ_NAPELN       5'b01001
-    `define ODLICZ_CZYSC        5'b01010
-    `define LICZNIK_RESET       5'b11111
+    `define LICZNIK_NULL        4'b0000
+    `define ODLICZ_KUBEK        4'b0001
+    `define ODLICZ_KAWA_OP1     4'b0010
+    `define ODLICZ_KAWA_OP2     4'b0011
+    `define ODLICZ_KAWA_OP3     4'b0100
+    `define ODLICZ_WODA_OP1     4'b0101
+    `define ODLICZ_WODA_OP2     4'b0110
+    `define ODLICZ_WODA_OP3     4'b0111
+    `define ODLICZ_MLEKO        4'b1000
+    `define ODLICZ_NAPELN       4'b1001
+    `define ODLICZ_CZYSC        4'b1010
+    `define LICZNIK_RESET       4'b1111
     
     // ODPOWIEDZI LICZNIKA
     `define NIC_NIE_ODLICZAM    1'b0
@@ -103,6 +103,7 @@
     `define CZAS_NAPELN         3
     `define CZAS_CZYSC          5
     
+    // wyœwietlacz - liczby i znaki
     `define W_0             4'b0000 // 0
     `define W_1             4'b0001 // 1
     `define W_2             4'b0010 // 2
@@ -120,6 +121,4 @@
     `define W_UL            4'b1101 // ul
     `define W_DM            4'b1110 // dm
     `define W_NULL          4'b1111 // nic
-    
-    
 `endif

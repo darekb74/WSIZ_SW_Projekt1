@@ -31,7 +31,7 @@ module mdk_top(
     // licznik
     input wire licz_in,                     // 0 - stoi, 1 - liczy
     input wire [6:0] count_secs,            // potrzebne do wyœwietlacza - iloœæ pozosta³ych sekund                    
-    output reg [4:0] licz_out,              // wyjœcie do licznika        
+    output reg [3:0] licz_out,              // wyjœcie do licznika        
     // sterowanie modu³em monet
     input wire[1:0]cmd_in,                  // odpowiedz na koendê z modu³u odpowedzialnego za monety
     input wire[4:0]stan_mm,                 // potrzebne do obs³ugi wyœwietlacza
@@ -69,7 +69,7 @@ module mdk_top(
     // pod³¹czamy dzielnik czêstotliwoœci
     divider #(1) div(.clk(clk), .clk_div(clk_div));
 
-    reg [5:0]stan_top, stan_n;              // stan i nastêpny stan modu³u g³ównego
+    reg [3:0]stan_top, stan_n;              // stan i nastêpny stan modu³u g³ównego
     
     function [9:0]licznikNaLiczby;
         input reg [6:0] count_secs;
@@ -120,23 +120,28 @@ module mdk_top(
                                 stan_n = `POBIERAM;
                             end
                     `CMD_RESET:
-                        case(cmd_out)
-                            `CMD_OP1:
-                                begin
-                                    cmd_out = `CMD_RESET1;
-                                    stan_n = `ZWRACAM;
-                                end
-                            `CMD_OP2:
-                                begin
-                                    cmd_out = `CMD_RESET2;
-                                    stan_n = `ZWRACAM;
-                                end
-                            `CMD_OP3:
-                                begin
-                                    cmd_out = `CMD_RESET3;
-                                    stan_n = `ZWRACAM;
-                                end
-                        endcase
+                        begin
+                            if (stan_top < `PODSTAW_KUBEK) // zapobiega resetowi w momencie, gdy automat parzy ju¿ kawê
+                            begin
+                                case(cmd_out)
+                                    `CMD_OP1:
+                                        begin
+                                            cmd_out = `CMD_RESET1;
+                                            stan_n = `ZWRACAM;
+                                        end
+                                    `CMD_OP2:
+                                        begin
+                                            cmd_out = `CMD_RESET2;
+                                            stan_n = `ZWRACAM;
+                                        end
+                                    `CMD_OP3:
+                                        begin
+                                            cmd_out = `CMD_RESET3;
+                                            stan_n = `ZWRACAM;
+                                        end
+                                endcase
+                            end
+                        end
                 endcase
             end
             stan_top <= stan_n;
