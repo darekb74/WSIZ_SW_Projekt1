@@ -2,7 +2,7 @@
 
 //////////////////////////////////////////////////////////////////////////////////
 // Company: WSIZ Copernicus
-// Engineer: Darek B.
+// Engineer: Rafa³ B., Szymon S., Darek B.
 // 
 // Create Date: 26.04.2017 18:27:52
 // Design Name: 
@@ -37,51 +37,49 @@ module test_bench();
                                              // 1 cykl = 1 sek (pomocne w symulacji)
 
     // pod³¹czamy modu³ g³ówny
-    mdk_top #(.CENA_OP1(CENA_OP1), .CENA_OP2(CENA_OP2), .CENA_OP3(CENA_OP3), .tick_every(tick_every*speed_up)) uut(.clk(clk), .panel_przyciskow_in(panel_przyciskow));
+    reg [2:0]monety_in;
+    wire [2:0]monety_out;
+    reg kubki, kawa, woda, mleko, bilon;
+    top #(.CENA_OP1(CENA_OP1), .CENA_OP2(CENA_OP2), .CENA_OP3(CENA_OP3), .tick_every(tick_every*speed_up))
+      uut(.clk(clk), .mon_in(monety_in), .panel_przyciskow_in(panel_przyciskow), .mon_out(monety_out),
+      .c_k(kubki), .i_k(kawa), .p_w(woda), .i_m(mleko), .p_b(bilon));
     // podgl¹d zegara dzielnika oraz stanu modu³u g³ównego
     wire clk_div;
     wire [3:0]stan_top;
-    assign clk_div = mdk_top.clk_div;
-    assign stan_top = mdk_top.stan_top;
+    assign clk_div = top.clk_div;
+    assign stan_top = top.old_top.stan_top;
     
     // sterowanie i podgl¹d modu³u monet
-    reg [2:0]monety_in;
-    wire [2:0]monety_out;
+
     wire [1:0]cmd_out_mm;
     wire [4:0]stan_mm;
-    assign uut.wrzut_zwrot.mon_in = monety_in;
-    assign monety_out = uut.wrzut_zwrot.mon_out;
-    assign stan_mm = uut.wrzut_zwrot.stan;
-    assign cmd_out_mm = uut.wrzut_zwrot.cmd_out;
+
+    assign stan_mm = top.wrzut_zwrot.stan;
+    assign cmd_out_mm = top.cmd_out;
 
     // sterowanie i podgl¹d modu³u sprawnoœci
     wire sprawnosc;
-    reg kubki, kawa, woda, mleko, bilon; 
-    assign uut.spr_test.c_k = kubki;
-    assign uut.spr_test.i_k = kawa;
-    assign uut.spr_test.p_w = woda;
-    assign uut.spr_test.i_m = mleko;
-    assign uut.spr_test.p_b = bilon;
-    assign sprawnosc = uut.spr_test.signal_s;     
+    assign sprawnosc = top.sprawnosc_out;
+         
    
     // podgl¹d wyœwietlacza
     wire [3:0]seg_out;
     wire seg_dl, seg_dm, seg_dot, seg_dr, seg_mm, seg_ul, seg_um, seg_ur; 
-    assign seg_um = uut.wys_pan.seg_um;
-    assign seg_ul = uut.wys_pan.seg_ul;
-    assign seg_ur = uut.wys_pan.seg_ur;
-    assign seg_mm = uut.wys_pan.seg_mm;
-    assign seg_dl = uut.wys_pan.seg_dl;
-    assign seg_dr = uut.wys_pan.seg_dr;
-    assign seg_dm = uut.wys_pan.seg_dm;
-    assign seg_dot = uut.wys_pan.seg_dot;
-    assign seg_out= uut.wys_pan.segment_out;
+    assign seg_um = top.seg_um;
+    assign seg_ul = top.seg_ul;
+    assign seg_ur = top.seg_ur;
+    assign seg_mm = top.seg_mm;
+    assign seg_dl = top.seg_dl;
+    assign seg_dr = top.seg_dr;
+    assign seg_dm = top.seg_dm;
+    assign seg_dot = top.seg_dot;
+    assign seg_out = top.segment_out;
     
     // podgl¹d licznika
     wire [6:0] count_secs;
     wire count_out;
-    assign count_secs = uut.licznik.count_secs; 
-    assign count_out = uut.licznik.count_out;
+    assign count_secs = top.count_secs; 
+    assign count_out = top.licz_in;
     
     
     

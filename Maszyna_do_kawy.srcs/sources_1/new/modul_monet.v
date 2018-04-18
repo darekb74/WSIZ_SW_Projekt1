@@ -2,7 +2,7 @@
 
 //////////////////////////////////////////////////////////////////////////////////
 // Company: WSIZ Copernicus
-// Engineer: Darek B.
+// Engineer: Rafa³ B., Szymon S., Darek B.
 // 
 // Create Date: 27.04.2017 18:45:34
 // Design Name: 

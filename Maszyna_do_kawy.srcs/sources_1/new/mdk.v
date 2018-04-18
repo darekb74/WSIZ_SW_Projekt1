@@ -2,7 +2,7 @@
 
 //////////////////////////////////////////////////////////////////////////////////
 // Company: WSIZ Copernicus
-// Engineer: Rafa³ B., Szymek S., Darek B.
+// Engineer: Rafa³ B., Szymon S., Darek B.
 // 
 // Create Date: 25.04.2017 18:46:49
 // Design Name:  
@@ -22,7 +22,7 @@
 
 
 module mdk_top(
-    input wire clk,                         // zegar
+    //input wire clk,                         // zegar
     input wire clk_div,                     // zegar z dzielnika czêstotliwoœci
     // sygna³ z przycisków
     input wire [2:0]panel_przyciskow_in,    // przyciski - wybór kawy 
@@ -59,15 +59,15 @@ module mdk_top(
 
     // ³¹czymy modu³y
     // pod³¹czamy modu³ monet
-    modul_monet #(.CENA_OP1(CENA_OP1), .CENA_OP2(CENA_OP2), .CENA_OP3(CENA_OP3)) wrzut_zwrot(.clk(clk_div), .cmd_in(cmd_out), .cmd_out(cmd_in), .stan_mm(stan_mm));
+    //^ modul_monet #(.CENA_OP1(CENA_OP1), .CENA_OP2(CENA_OP2), .CENA_OP3(CENA_OP3)) wrzut_zwrot(.clk(clk_div), .cmd_in(cmd_out), .cmd_out(cmd_in), .stan_mm(stan_mm));
     // pod³¹czamy modu³ sprawnosci
-    sprawnosc spr_test(.signal_s(sprawnosc_in));
+    //^ sprawnosc spr_test(.signal_s(sprawnosc_in));
     // pod³¹czamy modu³ licznika
-    counter #(.tick_every(tick_every)) licznik(.clk(clk_div), .count_out(licz_in), .count_in(licz_out), .count_secs(count_secs));
+    //^ counter #(.tick_every(tick_every)) licznik(.clk(clk_div), .count_out(licz_in), .count_in(licz_out), .count_secs(count_secs));
     // pod³¹czamy modu³ wyœwietlacza
-    wyswietlacz_4x7seg wys_pan(.clk(clk), .L_1(L_1), .L_2(L_2), .L_3(L_3), .L_4(L_4));
+    //^ wyswietlacz_4x7seg wys_pan(.clk(clk), .L_1(L_1), .L_2(L_2), .L_3(L_3), .L_4(L_4));
     // pod³¹czamy dzielnik czêstotliwoœci
-    divider #(1) div(.clk(clk), .clk_div(clk_div));
+    //^ divider #(1) div(.clk(clk), .clk_div(clk_div));
 
     reg [3:0]stan_top, stan_n;              // stan i nastêpny stan modu³u g³ównego
     

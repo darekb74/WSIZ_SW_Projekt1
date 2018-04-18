@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: WSIZ Copernicus
-// Engineer: Darek B.
+// Engineer: Rafa³ B., Szymon S., Darek B.
 // 
 // Create Date: 31.05.2017 15:40:43
 // Design Name: 
