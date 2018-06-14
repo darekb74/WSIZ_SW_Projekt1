@@ -68,60 +68,13 @@ module modul_monet(
     reg [4:0]tmp;                          // zmienna tymczasowa potrzebna do obliczeñ
 
     assign stan_mm = stan;
-    always @(cmd_in) // otrzymaliœmy komendê
-        begin
-            n_stan = stan;  // przepisujemy stan do n_stan - potrzebne w przypadku, gdyby stan nie uleg³ zmianie (pêtelka)
-            case (cmd_in)
-                `CMD_OP1:
-                    begin
-                        n_stan <= CENA_OP1;             // stan na cenê zakupou opcji 1
-                        cmd_out <= `ODP_W_TOKU;
-                    end
-                `CMD_OP2:
-                    begin
-                        n_stan <= CENA_OP2;             // stan na cenê zakupou opcji 2
-                        cmd_out <= `ODP_W_TOKU;
-                    end
-                `CMD_OP3:
-                    begin
-                        n_stan <= CENA_OP3;             // stan na cenê zakupou opcji 3
-                        cmd_out <= `ODP_W_TOKU;
-                    end
-                `CMD_RESET1:                             // rezygnujemy z zakupu opcji 3
-                    if (cmd_out == `ODP_W_TOKU)          // jeœli wybraliœmy juz opcjê
-                        begin
-                            cmd_out <= `ODP_ZWROT;       // rozpoczynamy zwrot
-                            //n_stan <= CENA_OP1-stan;
-                            fill_FIFO(CENA_OP1-stan);    // monety do zwrotu
-                        end
-                `CMD_RESET2:                             // rezygnujemy z zakupu opcji 2
-                    if (cmd_out == `ODP_W_TOKU)          // jeœli wybraliœmy juz opcjê
-                        begin
-                            cmd_out <= `ODP_ZWROT;       // rozpoczynamy zwrot
-                            //n_stan <= CENA_OP2-stan;
-                            fill_FIFO(CENA_OP2-stan);    // monety do zwrotu
-                        end
-                `CMD_RESET3:                             // rezygnujemy z zakupu opcji 3
-                    if (cmd_out == `ODP_W_TOKU)          // jeœli wybraliœmy juz opcjê
-                        begin
-                            cmd_out <= `ODP_ZWROT;       // rozpoczynamy zwrot
-                            //n_stan <= CENA_OP3-stan;
-                            fill_FIFO(CENA_OP3-stan);    // monety do zwrotu
-                        end
-                `CMD_RESET:                         // reset pocz¹tkowy
-                    if (cmd_out === 2'bxx)          // jeœli automat nie zosta³ zresetowany wczeœniej
-                        begin
-                            stan <= `NIC;
-                            n_stan <= `NIC;
-                            cmd_out <= 2'b00;
-                            mon_out <= 3'b000;
-                            tmp = `NIC;
-                        end
-           endcase
-        end
+    
+    reg [2:0]cmd_sig = 3'b000;
+    
     reg [2:0] out_FIFO [0:10]; // kolejka fifo na 10 monet
     reg [2:0] rcount_FIFO = 3'b000; // marker odczytu
     reg [2:0] wcount_FIFO = 3'b000; // marker zapisu
+
     task add_FIFO;
         input [2:0] moneta;
         begin
@@ -177,8 +130,62 @@ module modul_monet(
         end
     endtask
         
-    always @(clk)
+    always @(clk or cmd_in)
         begin
+            // cmd_in
+            if (cmd_sig != cmd_in) // otrzymaliœmy komendê
+                begin
+                    n_stan = stan;  // przepisujemy stan do n_stan - potrzebne w przypadku, gdyby stan nie uleg³ zmianie (pêtelka)
+                    case (cmd_in)
+                    `CMD_OP1:
+                        begin
+                            n_stan <= CENA_OP1;             // stan na cenê zakupou opcji 1
+                            cmd_out <= `ODP_W_TOKU;
+                        end
+                    `CMD_OP2:
+                        begin
+                            n_stan <= CENA_OP2;             // stan na cenê zakupou opcji 2
+                            cmd_out <= `ODP_W_TOKU;
+                        end
+                    `CMD_OP3:
+                        begin
+                            n_stan <= CENA_OP3;             // stan na cenê zakupou opcji 3
+                            cmd_out <= `ODP_W_TOKU;
+                        end
+                    `CMD_RESET1:                             // rezygnujemy z zakupu opcji 3
+                        if (cmd_out == `ODP_W_TOKU)          // jeœli wybraliœmy juz opcjê
+                            begin
+                                cmd_out <= `ODP_ZWROT;       // rozpoczynamy zwrot
+                                //n_stan <= CENA_OP1-stan;
+                                fill_FIFO(CENA_OP1-stan);    // monety do zwrotu
+                            end
+                    `CMD_RESET2:                             // rezygnujemy z zakupu opcji 2
+                        if (cmd_out == `ODP_W_TOKU)          // jeœli wybraliœmy juz opcjê
+                            begin
+                                cmd_out <= `ODP_ZWROT;       // rozpoczynamy zwrot
+                                //n_stan <= CENA_OP2-stan;
+                                fill_FIFO(CENA_OP2-stan);    // monety do zwrotu
+                            end
+                    `CMD_RESET3:                             // rezygnujemy z zakupu opcji 3
+                        if (cmd_out == `ODP_W_TOKU)          // jeœli wybraliœmy juz opcjê
+                            begin
+                                cmd_out <= `ODP_ZWROT;       // rozpoczynamy zwrot
+                                //n_stan <= CENA_OP3-stan;
+                                fill_FIFO(CENA_OP3-stan);    // monety do zwrotu
+                            end
+                    `CMD_RESET:                         // reset pocz¹tkowy
+                        if (cmd_out === 2'bxx)          // jeœli automat nie zosta³ zresetowany wczeœniej
+                            begin
+                                stan <= `NIC;
+                                n_stan <= `NIC;
+                                cmd_out <= 2'b00;
+                                mon_out <= 3'b000;
+                                tmp = `NIC;
+                            end
+                    endcase
+                    cmd_sig = cmd_in;
+                end
+            // org
             if (rcount_FIFO!=wcount_FIFO && mon_out == `z0g00)
                 begin
                     mon_out <= get_FIFO(0);    // oprozniamy bufor (monete)

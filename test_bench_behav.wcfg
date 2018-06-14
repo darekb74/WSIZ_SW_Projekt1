@@ -10,7 +10,7 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="44" />
+   <WVObjectSize size="59" />
    <wvobject db_ref_id="1" fp_name="/test_bench/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -173,6 +173,10 @@
       <obj_property name="ElementShortName">interrupt</obj_property>
       <obj_property name="ObjectShortName">interrupt</obj_property>
    </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/porcesor/kcpsm6/interrupt_ack" type="logic">
+      <obj_property name="ElementShortName">interrupt_ack</obj_property>
+      <obj_property name="ObjectShortName">interrupt_ack</obj_property>
+   </wvobject>
    <wvobject db_ref_id="1" fp_name="/test_bench/uut/porcesor/kcpsm6/sleep" type="logic">
       <obj_property name="ElementShortName">sleep</obj_property>
       <obj_property name="ObjectShortName">sleep</obj_property>
@@ -188,6 +192,7 @@
    <wvobject db_ref_id="1" fp_name="/test_bench/uut/porcesor/kcpsm6/instruction" type="array">
       <obj_property name="ElementShortName">instruction[17:0]</obj_property>
       <obj_property name="ObjectShortName">instruction[17:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject db_ref_id="1" fp_name="/test_bench/uut/porcesor/kcpsm6/in_port" type="array">
       <obj_property name="ElementShortName">in_port[7:0]</obj_property>
@@ -196,5 +201,62 @@
    <wvobject db_ref_id="1" fp_name="/test_bench/uut/porcesor/bram_enable" type="logic">
       <obj_property name="ElementShortName">bram_enable</obj_property>
       <obj_property name="ObjectShortName">bram_enable</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/porcesor/interrupt_data" type="array">
+      <obj_property name="ElementShortName">interrupt_data[7:0]</obj_property>
+      <obj_property name="ObjectShortName">interrupt_data[7:0]</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/lcddec/in_data" type="array">
+      <obj_property name="ElementShortName">in_data[7:0]</obj_property>
+      <obj_property name="ObjectShortName">in_data[7:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/LCD_DB" type="array">
+      <obj_property name="ElementShortName">LCD_DB[7:0]</obj_property>
+      <obj_property name="ObjectShortName">LCD_DB[7:0]</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/LCD_RS" type="logic">
+      <obj_property name="ElementShortName">LCD_RS</obj_property>
+      <obj_property name="ObjectShortName">LCD_RS</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/LCD_RW" type="logic">
+      <obj_property name="ElementShortName">LCD_RW</obj_property>
+      <obj_property name="ObjectShortName">LCD_RW</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/LCD_E" type="logic">
+      <obj_property name="ElementShortName">LCD_E</obj_property>
+      <obj_property name="ObjectShortName">LCD_E</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/lcd_putchar_8/CLK_1MHZ" type="logic">
+      <obj_property name="ElementShortName">CLK_1MHZ</obj_property>
+      <obj_property name="ObjectShortName">CLK_1MHZ</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/lcd_putchar_8/CLK_WR" type="logic">
+      <obj_property name="ElementShortName">CLK_WR</obj_property>
+      <obj_property name="ObjectShortName">CLK_WR</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/lcd_putchar_8/WR_EN" type="logic">
+      <obj_property name="ElementShortName">WR_EN</obj_property>
+      <obj_property name="ObjectShortName">WR_EN</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/lcd_putchar_8/RST" type="logic">
+      <obj_property name="ElementShortName">RST</obj_property>
+      <obj_property name="ObjectShortName">RST</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/lcd_putchar_8/LCD_DATA" type="array">
+      <obj_property name="ElementShortName">LCD_DATA[7:0]</obj_property>
+      <obj_property name="ObjectShortName">LCD_DATA[7:0]</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/lcd_putchar_8/FIFO" type="array">
+      <obj_property name="ElementShortName">FIFO[0:31][8:0]</obj_property>
+      <obj_property name="ObjectShortName">FIFO[0:31][8:0]</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/lcddec/lcd_out" type="array">
+      <obj_property name="ElementShortName">lcd_out[8:0]</obj_property>
+      <obj_property name="ObjectShortName">lcd_out[8:0]</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/lcd_putchar_8/DATA_IN" type="array">
+      <obj_property name="ElementShortName">DATA_IN[8:0]</obj_property>
+      <obj_property name="ObjectShortName">DATA_IN[8:0]</obj_property>
    </wvobject>
 </wave_config>

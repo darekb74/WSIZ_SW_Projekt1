@@ -37,8 +37,12 @@ module top(
     output wire seg_dl,              // dó³, lewo
     output wire seg_dr,              // dó³, prawo
     output wire seg_dm,              // dól, œrodek
-    output wire seg_dot              // kropka
-    
+    output wire seg_dot,             // kropka
+    // lcd
+    output wire [7:0]LCD_DB,
+    output wire LCD_RS, 
+    output wire LCD_RW,
+    output wire LCD_E 
     );
     // pod³¹czamy modu³ sprawnosci
     wire sprawnosc_out;
@@ -112,13 +116,25 @@ module top(
     */
      
     // LCD Decoder
+    wire [8:0]lcd_out;
+    wire WR;
     LCD_decoder lcddec(
         //in
         .clk(clk),
+        .CLK_250KHz(CLK_250KHz),
         .in_data(out_data),
         // out
-        .sprawnosc(sprawnosc_out)
+        .sprawnosc(sprawnosc_out),
+        .lcd_out(lcd_out),
+        .WR(WR)
     );
+   // lcd_putchar_8
    
+   lcd_putchar_8 lcd_putchar_8(
+        // input
+        .CLK_1MHZ(CLK_1MHz), .CLK_WR(clk), .WR_EN(WR), .RST(~reset), .DATA_IN(lcd_out),
+        // output
+        .LCD_DB(LCD_DB), .LCD_RS(LCD_RS), .LCD_RW(LCD_RW), .LCD_E(LCD_E) 
+    );
     
 endmodule

@@ -29,7 +29,6 @@ module Procesor(
     output reg [7:0] out_data
     );
     
-
     // kcpsm6 
     // input    
     reg interrupt;
@@ -85,21 +84,27 @@ module Procesor(
     // inicjalizacja
     initial begin
         interrupt = 1'b0;
-        
+        zmiana = 8'b00000000;
+        iack_edge = 1'b0;
     end
-    
-    always @(interrupt_data) // zmiana w sprawnoœci
-        begin
-            interrupt <= 1'b1; // wyzwalamy przerwanie
-        end
 
-    always @(negedge interrupt_ack) // rozpoczeto wykonywanie przerwania
-        begin
-            interrupt <= 1'b0; // zerujemy liniê przerwania
-        end
-    
+    reg [7:0]zmiana;
+    reg iack_edge;
+
     always @(clk)
         begin
+            if (interrupt_data != zmiana) begin // zmiana w sprawnoœci
+                interrupt <= 1'b1; // start przerwania
+            end 
+            if (interrupt_ack == 1'b1 && interrupt == 1'b1) begin
+                iack_edge = 1'b1;
+            end
+            if (interrupt_ack == 1'b0 && interrupt == 1'b1 && iack_edge == 1'b1) begin // rozpoczeto wykonywanie przerwania
+                interrupt = 1'b0; // zerujemy liniê przerwania
+                iack_edge = 1'b0;
+            end
+            zmiana <= interrupt_data; 
+            
             if(read_strobe)
             begin
                 case (port_id)
