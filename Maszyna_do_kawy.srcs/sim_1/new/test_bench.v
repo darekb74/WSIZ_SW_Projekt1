@@ -109,9 +109,9 @@ module test_bench();
             #(tick_every*300) panel_przyciskow <= `CMD_OP3;    // wybieramy opcjê nr 3
             #(tick_every*100) monety_in <= `z2g00;             // wrzucamy 2 z³
             #(tick_every*100) monety_in <= `z0g50;             // wrzucamy 50 gr
-            #10 woda <= 1'b1; // awaria
+            //#10 woda <= 1'b1; // awaria
             #(tick_every*100) monety_in <= `z2g00;             // wrzucamy 2 z³
-            #10 woda <= 1'b0; // ok
+            //#10 woda <= 1'b0; // ok
             #(tick_every*100) monety_in <= `z5g00;             // wrzucamy 5 z³
             
         end

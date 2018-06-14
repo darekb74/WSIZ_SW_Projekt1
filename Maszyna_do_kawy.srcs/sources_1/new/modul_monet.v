@@ -133,7 +133,7 @@ module modul_monet(
     endtask
     
     function [2:0]get_FIFO;
-        input whatever;
+        input whatever; // (O_o)/ mo¿e task by³by lepszy ?
         begin
             if (rcount_FIFO != wcount_FIFO) begin
                 get_FIFO = out_FIFO[rcount_FIFO];
@@ -148,25 +148,16 @@ module modul_monet(
         end
     endfunction
     
+    reg [2:0]i;
     task fill_FIFO;
         input [4:0] do_zwrotu;
-        begin   //max 10 miejsc -> max kwota 27 z³
-            if (do_zwrotu>=`m500) begin
-                add_FIFO(`z5g00);
-                do_zwrotu = do_zwrotu - `m500;
+        begin   //max 10 miejsc -> max kwota 36,50 z³
+            for (i = 0; i<6; i=i+1) begin 
+                if (do_zwrotu>=`m500) begin
+                    add_FIFO(`z5g00);
+                    do_zwrotu = do_zwrotu - `m500;
+                end
             end
-            if (do_zwrotu>=`m500) begin
-                add_FIFO(`z5g00);
-                do_zwrotu = do_zwrotu - `m500;
-            end
-            if (do_zwrotu>=`m500) begin
-                add_FIFO(`z5g00);
-                do_zwrotu = do_zwrotu - `m500;
-            end
-            if (do_zwrotu>=`m500) begin
-                add_FIFO(`z5g00);
-                do_zwrotu = do_zwrotu - `m500;
-            end                    
             if (do_zwrotu>=`m200) begin
                 add_FIFO(`z2g00);
                 do_zwrotu = do_zwrotu - `m200;
@@ -178,14 +169,6 @@ module modul_monet(
             if (do_zwrotu>=`m100) begin
                 add_FIFO(`z1g00);
                 do_zwrotu = do_zwrotu - `m100;
-            end
-            if (do_zwrotu>=`m100) begin
-                add_FIFO(`z1g00);
-                do_zwrotu = do_zwrotu - `m100;
-            end
-            if (do_zwrotu>=`m050) begin
-                add_FIFO(`z0g50);
-                do_zwrotu = do_zwrotu - `m050;
             end
             if (do_zwrotu>=`m050) begin
                 add_FIFO(`z0g50);
