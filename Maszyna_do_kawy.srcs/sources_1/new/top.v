@@ -42,11 +42,14 @@ module top(
     );
     // pod³¹czamy modu³ sprawnosci
     wire sprawnosc_out;
-    sprawnosc spr_test(.c_k(c_k), .p_w(p_w), .i_k(i_k), .i_m(i_m), .p_b(p_b), .signal_s(sprawnosc_out));
+    wire [7:0]sprawnosc_map;
+    //sprawnosc spr_test(.c_k(c_k), .p_w(p_w), .i_k(i_k), .i_m(i_m), .p_b(p_b), .signal_s(sprawnosc_out), .sprawnosc_map(sprawnosc_map));
+    sprawnosc spr_test(.c_k(c_k), .p_w(p_w), .i_k(i_k), .i_m(i_m), .p_b(p_b), .sprawnosc_map(sprawnosc_map));
     
     //dzielnik czestotliwoœci
     wire clk_div;
-    divider #(1) div(.clk(clk), .clk_div(clk_div));
+    wire CLK_1MHz, CLK_250KHz;
+    divider div(.clk(clk), .CLK_1MHz(CLK_1MHz), .CLK_250KHz(CLK_250KHz));
     
     //modu³ monet
     parameter CENA_OP1 = `m300;				 // cena opcji 1 (3.00z³ - expresso )
@@ -55,7 +58,7 @@ module top(
     wire [2:0]cmd_out;
     wire [1:0]cmd_in;
     wire [4:0]stan_mm;
-    modul_monet #(.CENA_OP1(CENA_OP1), .CENA_OP2(CENA_OP2), .CENA_OP3(CENA_OP3)) wrzut_zwrot(.clk(clk_div), .cmd_in(cmd_out),
+    modul_monet #(.CENA_OP1(CENA_OP1), .CENA_OP2(CENA_OP2), .CENA_OP3(CENA_OP3)) wrzut_zwrot(.clk(CLK_1MHz), .cmd_in(cmd_out),
         .cmd_out(cmd_in), .stan_mm(stan_mm), .mon_in(mon_in), .mon_out(mon_out));
     
     // licznik
@@ -63,7 +66,7 @@ module top(
     wire licz_in;
     wire [3:0]licz_out;
     wire [6:0]count_secs;
-    counter #(.tick_every(tick_every)) licznik(.clk(clk_div), .count_out(licz_in), .count_in(licz_out), .count_secs(count_secs));
+    counter #(.tick_every(tick_every)) licznik(.clk(CLK_250KHz), .count_out(licz_in), .count_in(licz_out), .count_secs(count_secs));
     
     // wyswietlacz
     wire [4:0]L_1, L_2, L_3, L_4;
@@ -73,11 +76,49 @@ module top(
     
     // pod³¹czenie starego top
     wire [2:0]u;
-    mdk_top old_top(.sprawnosc_in(sprawnosc_out), .panel_przyciskow_in(panel_przyciskow_in), .clk_div(clk_div), 
+    wire [3:0]stan_data;
+    wire reset;
+    mdk_top old_top(.sprawnosc_in(~sprawnosc_out), .panel_przyciskow_in(panel_przyciskow_in), .clk_div(CLK_1MHz), 
                     .cmd_out(cmd_out), .cmd_in(cmd_in), .stan_mm(stan_mm), .licz_in(licz_in), .licz_out(licz_out), .count_secs(count_secs),
                     .L_1(L_1), .L_2(L_2), .L_3(L_3), .L_4(L_4),
                     
-                    .urzadzenia(urzadzenia) );
-
+                    .urzadzenia(urzadzenia), .stan_data(stan_data), .reset(reset) );
+    
+    // podlaczenie procesora
+    wire [7:0]out_data;
+   
+   Procesor porcesor (
+        // in
+        .clk(clk),
+        .reset(reset),
+        .interrupt_data(sprawnosc_map),
+        .stan_data(stan_data),
+        // out
+        .out_data(out_data)
+        
+    );
+    
+    /*
+    Procesor_v2 porcesor (
+            // in
+            .clk(clk),
+            .reset(reset),
+            .interrupt_data(sprawnosc_map),
+            .stan_data(stan_data),
+            // out
+            .out_data(out_data)
+            
+        );
+    */
+     
+    // LCD Decoder
+    LCD_decoder lcddec(
+        //in
+        .clk(clk),
+        .in_data(out_data),
+        // out
+        .sprawnosc(sprawnosc_out)
+    );
+   
     
 endmodule

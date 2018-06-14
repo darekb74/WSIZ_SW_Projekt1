@@ -10,38 +10,52 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="37" />
+   <WVObjectSize size="44" />
    <wvobject db_ref_id="1" fp_name="/test_bench/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/CLK_1MHz" type="logic">
+      <obj_property name="ElementShortName">CLK_1MHz</obj_property>
+      <obj_property name="ObjectShortName">CLK_1MHz</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/CLK_250KHz" type="logic">
+      <obj_property name="ElementShortName">CLK_250KHz</obj_property>
+      <obj_property name="ObjectShortName">CLK_250KHz</obj_property>
    </wvobject>
    <wvobject db_ref_id="1" fp_name="/test_bench/panel_przyciskow" type="array">
       <obj_property name="ElementShortName">panel_przyciskow[2:0]</obj_property>
       <obj_property name="ObjectShortName">panel_przyciskow[2:0]</obj_property>
    </wvobject>
-   <wvobject db_ref_id="1" fp_name="/test_bench/clk_div" type="logic">
-      <obj_property name="ElementShortName">clk_div</obj_property>
-      <obj_property name="ObjectShortName">clk_div</obj_property>
-   </wvobject>
    <wvobject db_ref_id="1" fp_name="/test_bench/stan_top" type="array">
-      <obj_property name="ElementShortName">stan_top[5:0]</obj_property>
-      <obj_property name="ObjectShortName">stan_top[5:0]</obj_property>
+      <obj_property name="ElementShortName">stan_top[3:0]</obj_property>
+      <obj_property name="ObjectShortName">stan_top[3:0]</obj_property>
    </wvobject>
    <wvobject db_ref_id="1" fp_name="/test_bench/monety_in" type="array">
       <obj_property name="ElementShortName">monety_in[2:0]</obj_property>
       <obj_property name="ObjectShortName">monety_in[2:0]</obj_property>
+      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject db_ref_id="1" fp_name="/test_bench/monety_out" type="array">
       <obj_property name="ElementShortName">monety_out[2:0]</obj_property>
       <obj_property name="ObjectShortName">monety_out[2:0]</obj_property>
-   </wvobject>
-   <wvobject db_ref_id="1" fp_name="/test_bench/cmd_out_mm" type="array">
-      <obj_property name="ElementShortName">cmd_out_mm[1:0]</obj_property>
-      <obj_property name="ObjectShortName">cmd_out_mm[1:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject db_ref_id="1" fp_name="/test_bench/stan_mm" type="array">
       <obj_property name="ElementShortName">stan_mm[4:0]</obj_property>
       <obj_property name="ObjectShortName">stan_mm[4:0]</obj_property>
+      <obj_property name="CustomSignalColor">#0000FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/wrzut_zwrot/cmd_in" type="array">
+      <obj_property name="ElementShortName">cmd_in[2:0]</obj_property>
+      <obj_property name="ObjectShortName">cmd_in[2:0]</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/cmd_out_mm" type="array">
+      <obj_property name="ElementShortName">cmd_out_mm[1:0]</obj_property>
+      <obj_property name="ObjectShortName">cmd_out_mm[1:0]</obj_property>
    </wvobject>
    <wvobject db_ref_id="1" fp_name="/test_bench/sprawnosc" type="logic">
       <obj_property name="ElementShortName">sprawnosc</obj_property>
@@ -103,6 +117,16 @@
       <obj_property name="ElementShortName">seg_ur</obj_property>
       <obj_property name="ObjectShortName">seg_ur</obj_property>
    </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/lcddec/linia_1" type="array">
+      <obj_property name="ElementShortName">linia_1[128:1]</obj_property>
+      <obj_property name="ObjectShortName">linia_1[128:1]</obj_property>
+      <obj_property name="Radix">ASCIIRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/lcddec/linia_2" type="array">
+      <obj_property name="ElementShortName">linia_2[128:1]</obj_property>
+      <obj_property name="ObjectShortName">linia_2[128:1]</obj_property>
+      <obj_property name="Radix">ASCIIRADIX</obj_property>
+   </wvobject>
    <wvobject db_ref_id="1" fp_name="/test_bench/count_secs" type="array">
       <obj_property name="ElementShortName">count_secs[6:0]</obj_property>
       <obj_property name="ObjectShortName">count_secs[6:0]</obj_property>
@@ -112,48 +136,6 @@
       <obj_property name="ElementShortName">count_out</obj_property>
       <obj_property name="ObjectShortName">count_out</obj_property>
    </wvobject>
-   <wvobject db_ref_id="1" fp_name="/test_bench/licz_out" type="array">
-      <obj_property name="ElementShortName">licz_out[4:0]</obj_property>
-      <obj_property name="ObjectShortName">licz_out[4:0]</obj_property>
-   </wvobject>
-   <wvobject db_ref_id="1" fp_name="/test_bench/cmd_out" type="array">
-      <obj_property name="ElementShortName">cmd_out[2:0]</obj_property>
-      <obj_property name="ObjectShortName">cmd_out[2:0]</obj_property>
-   </wvobject>
-   <wvobject db_ref_id="1" fp_name="/test_bench/L_1" type="array">
-      <obj_property name="ElementShortName">L_1[4:0]</obj_property>
-      <obj_property name="ObjectShortName">L_1[4:0]</obj_property>
-   </wvobject>
-   <wvobject db_ref_id="1" fp_name="/test_bench/L_2" type="array">
-      <obj_property name="ElementShortName">L_2[4:0]</obj_property>
-      <obj_property name="ObjectShortName">L_2[4:0]</obj_property>
-   </wvobject>
-   <wvobject db_ref_id="1" fp_name="/test_bench/L_3" type="array">
-      <obj_property name="ElementShortName">L_3[4:0]</obj_property>
-      <obj_property name="ObjectShortName">L_3[4:0]</obj_property>
-      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-   </wvobject>
-   <wvobject db_ref_id="1" fp_name="/test_bench/L_4" type="array">
-      <obj_property name="ElementShortName">L_4[4:0]</obj_property>
-      <obj_property name="ObjectShortName">L_4[4:0]</obj_property>
-      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-   </wvobject>
-   <wvobject db_ref_id="1" fp_name="/test_bench/urzadzenia" type="array">
-      <obj_property name="ElementShortName">urzadzenia[2:0]</obj_property>
-      <obj_property name="ObjectShortName">urzadzenia[2:0]</obj_property>
-   </wvobject>
-   <wvobject db_ref_id="1" fp_name="/test_bench/CENA_OP1" type="array">
-      <obj_property name="ElementShortName">CENA_OP1[4:0]</obj_property>
-      <obj_property name="ObjectShortName">CENA_OP1[4:0]</obj_property>
-   </wvobject>
-   <wvobject db_ref_id="1" fp_name="/test_bench/CENA_OP2" type="array">
-      <obj_property name="ElementShortName">CENA_OP2[4:0]</obj_property>
-      <obj_property name="ObjectShortName">CENA_OP2[4:0]</obj_property>
-   </wvobject>
-   <wvobject db_ref_id="1" fp_name="/test_bench/CENA_OP3" type="array">
-      <obj_property name="ElementShortName">CENA_OP3[4:0]</obj_property>
-      <obj_property name="ObjectShortName">CENA_OP3[4:0]</obj_property>
-   </wvobject>
    <wvobject db_ref_id="1" fp_name="/test_bench/tick_every" type="array">
       <obj_property name="ElementShortName">tick_every[31:0]</obj_property>
       <obj_property name="ObjectShortName">tick_every[31:0]</obj_property>
@@ -161,5 +143,58 @@
    <wvobject db_ref_id="1" fp_name="/test_bench/speed_up" type="array">
       <obj_property name="ElementShortName">speed_up[31:0]</obj_property>
       <obj_property name="ObjectShortName">speed_up[31:0]</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/sprawnosc_map" type="array">
+      <obj_property name="ElementShortName">sprawnosc_map[7:0]</obj_property>
+      <obj_property name="ObjectShortName">sprawnosc_map[7:0]</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/stan_data" type="array">
+      <obj_property name="ElementShortName">stan_data[3:0]</obj_property>
+      <obj_property name="ObjectShortName">stan_data[3:0]</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/porcesor/kcpsm6/kcpsm6_opcode" type="array">
+      <obj_property name="ElementShortName">kcpsm6_opcode[1:152]</obj_property>
+      <obj_property name="ObjectShortName">kcpsm6_opcode[1:152]</obj_property>
+      <obj_property name="Radix">ASCIIRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/porcesor/kcpsm6/write_strobe" type="logic">
+      <obj_property name="ElementShortName">write_strobe</obj_property>
+      <obj_property name="ObjectShortName">write_strobe</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/porcesor/kcpsm6/k_write_strobe" type="logic">
+      <obj_property name="ElementShortName">k_write_strobe</obj_property>
+      <obj_property name="ObjectShortName">k_write_strobe</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/porcesor/kcpsm6/read_strobe" type="logic">
+      <obj_property name="ElementShortName">read_strobe</obj_property>
+      <obj_property name="ObjectShortName">read_strobe</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/porcesor/kcpsm6/interrupt" type="logic">
+      <obj_property name="ElementShortName">interrupt</obj_property>
+      <obj_property name="ObjectShortName">interrupt</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/porcesor/kcpsm6/sleep" type="logic">
+      <obj_property name="ElementShortName">sleep</obj_property>
+      <obj_property name="ObjectShortName">sleep</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/porcesor/kcpsm6/reset" type="logic">
+      <obj_property name="ElementShortName">reset</obj_property>
+      <obj_property name="ObjectShortName">reset</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/porcesor/kcpsm6/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/porcesor/kcpsm6/instruction" type="array">
+      <obj_property name="ElementShortName">instruction[17:0]</obj_property>
+      <obj_property name="ObjectShortName">instruction[17:0]</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/porcesor/kcpsm6/in_port" type="array">
+      <obj_property name="ElementShortName">in_port[7:0]</obj_property>
+      <obj_property name="ObjectShortName">in_port[7:0]</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" fp_name="/test_bench/uut/porcesor/bram_enable" type="logic">
+      <obj_property name="ElementShortName">bram_enable</obj_property>
+      <obj_property name="ObjectShortName">bram_enable</obj_property>
    </wvobject>
 </wave_config>

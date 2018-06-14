@@ -21,21 +21,31 @@
 
 
 module divider(
-    input wire clk,
-    output reg clk_div
-    );
-    
-    parameter div = 1;
-    
-    reg [div:0] c = 0;
-    
-    always @(negedge c)
-            begin
-                clk_div <= (clk_div === 1'bX ? 1'b0 : ~clk_div);
-            end
-    always @(posedge clk)
-        begin
-            c <= c + 1;
+    input clk,
+    output reg CLK_250KHz,
+	output reg CLK_1MHz);
+
+reg [4:0] cc;
+reg [4:0] ct;
+
+always @(posedge clk)
+     
+    if (ct<24) 
+        ct<=ct+1;
+    else 
+        begin 
+            ct<=0; 
+            CLK_1MHz<=(CLK_1MHz === 1'bX ? 1'b0 : ~CLK_1MHz);
+        end 
+
+always @(posedge CLK_1MHz) 
+    if (cc<1) 
+        cc<=cc+1;
+    else 
+        begin 
+            cc<=0; 
+            CLK_250KHz<=(CLK_250KHz === 1'bX ? 1'b0 : ~CLK_250KHz); 
         end
+
     
 endmodule

@@ -30,7 +30,7 @@ module test_bench();
     parameter CENA_OP2 = `m500;              // cena opcji 2 (5.00z³ - expresso grande :P )
     parameter CENA_OP3 = `m750;              // cena opcji 3 (7.50z³ - cappuccino :P )
     
-    parameter tick_every = 20;               // w³aœciwie nie nale¿y zmieniaæ - regulacja czêstotliwoœci maszyny
+    parameter tick_every = 20 ;             // w³aœciwie nie nale¿y zmieniaæ - regulacja czêstotliwoœci maszyny
                                              // aktualnie: (1 000 000 us / 20 us) cykli/s = 50 000 Hz = 50 kHz
     parameter speed_up = 50000;              // zwiêkszenie spowoduje przyspieszenie licznika (tylko licznika)
                                              // ustawienie na 50 000 spowoduje przyspieszenia licznika do wartoœci:
@@ -44,9 +44,9 @@ module test_bench();
       uut(.clk(clk), .mon_in(monety_in), .panel_przyciskow_in(panel_przyciskow), .mon_out(monety_out),
       .c_k(kubki), .i_k(kawa), .p_w(woda), .i_m(mleko), .p_b(bilon));
     // podgl¹d zegara dzielnika oraz stanu modu³u g³ównego
-    wire clk_div;
+    wire CLK_1MHz;
     wire [3:0]stan_top;
-    assign clk_div = top.clk_div;
+    assign CLK_1MHz = top.CLK_1MHz;
     assign stan_top = top.old_top.stan_top;
     
     // sterowanie i podgl¹d modu³u monet
@@ -95,22 +95,24 @@ module test_bench();
             bilon <= 1'b0;
             monety_in = `z0g00;
             // zaczynamy
-            #(tick_every*10) monety_in <= `z0g50;             // wrzucamy 50 groszy
-            #(tick_every*10) monety_in <= `z1g00;             // wrzucamy 1 z³
-            #(tick_every*10) monety_in <= `z2g00;             // wrzucamy 2 z³
-            #(tick_every*10) monety_in <= `z5g00;             // wrzucamy 5 z³
-            #(tick_every*10) panel_przyciskow <= `CMD_OP1;    // wybieramy opcjê nr 1
-            #(tick_every*10) panel_przyciskow <= `CMD_OP2;    // wybieramy opcjê nr 2 (bez resetu)
-            #(tick_every*10) monety_in <= `z2g00;             // wrzucamy 2 z³
-            #(tick_every*10) monety_in <= `z0g50;             // wrzucamy 50 gr
-            #(tick_every*10) panel_przyciskow = `CMD_RESET;   // reset 
-            #(tick_every*2) monety_in <= `z5g00;              // wrzucamy 5 z³
+            #(tick_every*100) monety_in <= `z0g50;             // wrzucamy 50 groszy
+            #(tick_every*100) monety_in <= `z1g00;             // wrzucamy 1 z³
+            #(tick_every*100) monety_in <= `z2g00;             // wrzucamy 2 z³
+            #(tick_every*100) monety_in <= `z5g00;             // wrzucamy 5 z³
+            #(tick_every*100) panel_przyciskow <= `CMD_OP1;    // wybieramy opcjê nr 1
+            #(tick_every*100) panel_przyciskow <= `CMD_OP2;    // wybieramy opcjê nr 2 (bez resetu)
+            #(tick_every*100) monety_in <= `z2g00;             // wrzucamy 2 z³
+            #(tick_every*100) monety_in <= `z0g50;             // wrzucamy 50 gr
+            #(tick_every*100) panel_przyciskow = `CMD_RESET;   // reset 
+            #(tick_every*50) monety_in <= `z5g00;              // wrzucamy 5 z³
             // ok, teraz zrtobimy kawkê
-            #(tick_every*30) panel_przyciskow <= `CMD_OP3;    // wybieramy opcjê nr 3
-            #(tick_every*10) monety_in <= `z2g00;             // wrzucamy 2 z³
-            #(tick_every*10) monety_in <= `z0g50;             // wrzucamy 50 gr
-            #(tick_every*10) monety_in <= `z2g00;             // wrzucamy 2 z³
-            #(tick_every*10) monety_in <= `z5g00;             // wrzucamy 5 z³
+            #(tick_every*300) panel_przyciskow <= `CMD_OP3;    // wybieramy opcjê nr 3
+            #(tick_every*100) monety_in <= `z2g00;             // wrzucamy 2 z³
+            #(tick_every*100) monety_in <= `z0g50;             // wrzucamy 50 gr
+            #10 woda <= 1'b1; // awaria
+            #(tick_every*100) monety_in <= `z2g00;             // wrzucamy 2 z³
+            #10 woda <= 1'b0; // ok
+            #(tick_every*100) monety_in <= `z5g00;             // wrzucamy 5 z³
             
         end
     always
@@ -120,12 +122,12 @@ module test_bench();
                     clk <= ~clk;        // zegar - tick
                 end
         end
-     always @(clk)
+     always @(CLK_1MHz)
         begin
             if (monety_in != `z0g00)
-               #(tick_every*4) monety_in <= `z0g00;              // moneta wpad³a wiêc zerujemy sygna³
+               #(tick_every*25) monety_in <= `z0g00;              // moneta wpad³a wiêc zerujemy sygna³
             if (panel_przyciskow != 1'b0)
-               #(tick_every*4) panel_przyciskow <= `CMD_NIC;     // wciœniêto przycisk wiêc zerujemy
+               #(tick_every*25) panel_przyciskow <= `CMD_NIC;     // wciœniêto przycisk wiêc zerujemy
         end
     
 endmodule

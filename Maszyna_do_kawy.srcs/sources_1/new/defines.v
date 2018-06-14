@@ -121,4 +121,9 @@
     `define W_UL            4'b1101 // ul
     `define W_DM            4'b1110 // dm
     `define W_NULL          4'b1111 // nic
+    
+    // 
+    `define ERROR_PORT            0
+    `define WYSWIETLACZ_PORT      1
+    `define STAN_PORT             2
 `endif

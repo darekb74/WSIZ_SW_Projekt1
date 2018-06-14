@@ -91,71 +91,128 @@ module modul_monet(
                     if (cmd_out == `ODP_W_TOKU)          // jeœli wybraliœmy juz opcjê
                         begin
                             cmd_out <= `ODP_ZWROT;       // rozpoczynamy zwrot
-                            n_stan <= CENA_OP1-stan;
+                            //n_stan <= CENA_OP1-stan;
+                            fill_FIFO(CENA_OP1-stan);    // monety do zwrotu
                         end
                 `CMD_RESET2:                             // rezygnujemy z zakupu opcji 2
                     if (cmd_out == `ODP_W_TOKU)          // jeœli wybraliœmy juz opcjê
                         begin
                             cmd_out <= `ODP_ZWROT;       // rozpoczynamy zwrot
-                            n_stan <= CENA_OP2-stan;
+                            //n_stan <= CENA_OP2-stan;
+                            fill_FIFO(CENA_OP2-stan);    // monety do zwrotu
                         end
                 `CMD_RESET3:                             // rezygnujemy z zakupu opcji 3
                     if (cmd_out == `ODP_W_TOKU)          // jeœli wybraliœmy juz opcjê
                         begin
                             cmd_out <= `ODP_ZWROT;       // rozpoczynamy zwrot
-                            n_stan <= CENA_OP3-stan;
+                            //n_stan <= CENA_OP3-stan;
+                            fill_FIFO(CENA_OP3-stan);    // monety do zwrotu
                         end
                 `CMD_RESET:                         // reset pocz¹tkowy
                     if (cmd_out === 2'bxx)          // jeœli automat nie zosta³ zresetowany wczeœniej
                         begin
-                            stan = `NIC;
-                            n_stan = `NIC;
-                            cmd_out = 2'b00;
-                            mon_out = 3'b000;
+                            stan <= `NIC;
+                            n_stan <= `NIC;
+                            cmd_out <= 2'b00;
+                            mon_out <= 3'b000;
                             tmp = `NIC;
                         end
            endcase
         end
-    always @(posedge clk)
+    reg [2:0] out_FIFO [0:10]; // kolejka fifo na 10 monet
+    reg [2:0] rcount_FIFO = 3'b000; // marker odczytu
+    reg [2:0] wcount_FIFO = 3'b000; // marker zapisu
+    task add_FIFO;
+        input [2:0] moneta;
         begin
+            out_FIFO[wcount_FIFO] = moneta;
+            wcount_FIFO = wcount_FIFO+1;
+            if (wcount_FIFO > 10)
+                wcount_FIFO = 0;
+        end
+    endtask
+    
+    function [2:0]get_FIFO;
+        input whatever;
+        begin
+            if (rcount_FIFO != wcount_FIFO) begin
+                get_FIFO = out_FIFO[rcount_FIFO];
+                rcount_FIFO = rcount_FIFO+1;
+                if (rcount_FIFO > 10)
+                    rcount_FIFO = 0;
+            end
+            else
+            begin
+                get_FIFO = `z0g00;
+            end
+        end
+    endfunction
+    
+    task fill_FIFO;
+        input [4:0] do_zwrotu;
+        begin   //max 10 miejsc -> max kwota 27 z³
+            if (do_zwrotu>=`m500) begin
+                add_FIFO(`z5g00);
+                do_zwrotu = do_zwrotu - `m500;
+            end
+            if (do_zwrotu>=`m500) begin
+                add_FIFO(`z5g00);
+                do_zwrotu = do_zwrotu - `m500;
+            end
+            if (do_zwrotu>=`m500) begin
+                add_FIFO(`z5g00);
+                do_zwrotu = do_zwrotu - `m500;
+            end
+            if (do_zwrotu>=`m500) begin
+                add_FIFO(`z5g00);
+                do_zwrotu = do_zwrotu - `m500;
+            end                    
+            if (do_zwrotu>=`m200) begin
+                add_FIFO(`z2g00);
+                do_zwrotu = do_zwrotu - `m200;
+            end
+            if (do_zwrotu>=`m200) begin
+                add_FIFO(`z2g00);
+                do_zwrotu = do_zwrotu - `m200;
+            end
+            if (do_zwrotu>=`m100) begin
+                add_FIFO(`z1g00);
+                do_zwrotu = do_zwrotu - `m100;
+            end
+            if (do_zwrotu>=`m100) begin
+                add_FIFO(`z1g00);
+                do_zwrotu = do_zwrotu - `m100;
+            end
+            if (do_zwrotu>=`m050) begin
+                add_FIFO(`z0g50);
+                do_zwrotu = do_zwrotu - `m050;
+            end
+            if (do_zwrotu>=`m050) begin
+                add_FIFO(`z0g50);
+                do_zwrotu = do_zwrotu - `m050;
+            end
+        end
+    endtask
+        
+    always @(clk)
+        begin
+            if (rcount_FIFO!=wcount_FIFO && mon_out == `z0g00)
+                begin
+                    mon_out <= get_FIFO(0);    // oprozniamy bufor (monete)
+                end
             case (cmd_out)
                 `ODP_ZWROT:                              // jesteœmy w trybie zwrotu
                     if (mon_in != `z0g00)                // zwracamy monety, a ktoœ wrzuci³ dodatkow¹ monetê
                         begin
-                            n_stan <= stan;             // stan bez zmian
-                            mon_out <= mon_in;          // zwracamy monetê
+                            n_stan <= stan;              // stan bez zmian
+                            add_FIFO(mon_in);          // dodaj do kolejki zwrotu
                         end
-                    else begin                          // w innym przypadku kontynuujemy zwrot monet
-                        if (stan>`m500) begin            // ponad 5 z³ do zwrotu
-                            mon_out <= `z5g00;           // zwracamy 5 z³
-                            n_stan <= stan - `m500;      // ustawiamy nastêpny stan
-                            end
-                        else if (stan==`m500) begin      // równo 5 z³ do zwrotu
-                            mon_out <= `z5g00;           // zwracamy 5 z³
-                            n_stan <= `NIC;              // ustawiamy nastêpny stan
-                            cmd_out <= `ODP_OK;          // informujemy MG, ¿e wszystko OK
-                            end
-                        else if (stan>`m200) begin       // ponad 2 z³ do zwrotu
-                            mon_out <= `z2g00;           // zwracamy 2 z³
-                            n_stan <= stan - `m200;      // ustawiamy nastêpny stan
-                            end
-                        else if (stan == `m200) begin    // dok³adnie 2 z³ do zwrotu
-                            mon_out <= `z2g00;           // zwracamy 2 z³
-                            n_stan <= `NIC;              // ustawiamy nastêpny stan
-                            cmd_out <= `ODP_OK;          // informujemy MG, ¿e wszystko OK
-                            end
-                        else if (stan == `m150) begin    // pozosta³o 1,50 do zwrotu
-                            mon_out <= `z1g00;           // zwracamy 1 z³
-                            n_stan <= `m050;             // ustawiamy nastêpny stan
-                            end
-                        else begin
-                            case (stan)
-                                `m050:  mon_out <= `z0g50;// pozosta³o 50 gr do zwrotu - zwracamy
-                                `m100:  mon_out <= `z1g00;// pozosta³o 1 z³ do zwrotu - zwracamy
-                            endcase
-                            n_stan <= `NIC;              // ustawiamy nastêpny stan
-                            cmd_out <= `ODP_OK;          // informujemy MG, ¿e wszystko OK
-                            end 
+                    else begin
+                        if (stan>`NIC) // wypelnimy kolejkê zwrotu
+                        begin
+                            stan = `NIC;
+                            cmd_out <= `ODP_OK;
+                        end
                     end
                 `ODP_W_TOKU:                             // jesteœmy w trybie op³aty za opcjê
                     begin
@@ -175,7 +232,8 @@ module modul_monet(
                             end
                         else                            // moneta to za du¿o - trzeba zwróciæ resztê
                             begin
-                                n_stan <= tmp - stan;   // ustawiamy nastêpny stan
+                                //n_stan <= tmp - stan;   // ustawiamy nastêpny stan
+                                fill_FIFO(tmp - stan);  // reszta do zwrotu
                                 cmd_out <= `ODP_ZWROT;   // ustawiamy tryb na zwrot;  
                             end
                     end
@@ -183,17 +241,16 @@ module modul_monet(
                     if (mon_in != `z0g00)                // modu³ nic nie robi a wrzucono monetê
                         begin
                             n_stan <= stan;             // stan bez zmian
-                            mon_out <= mon_in;          // zwracamy monetê
+                            add_FIFO(mon_in);         // dodajemy do kolejki zwrotu
+                            //mon_out <= mon_in;          // zwracamy monetê
                         end
             endcase 
         end
  
-    always @(negedge clk)
+    always @(clk)
         begin
-            #10 begin
-                if (cmd_out == `ODP_OK) cmd_out <= `ODP_NIC;  // koniec wrzutu lub zwrotu - modu³ w stanie zero
-                if (mon_out != `z0g00) mon_out <= `z0g00;     // po 10ns zerujemy sygna³ zwrotu monety
-            end
+            if (cmd_out == `ODP_OK) cmd_out <= `ODP_NIC;  // koniec wrzutu lub zwrotu - modu³ w stanie zero
+            if (mon_out != `z0g00) mon_out <= `z0g00;     // po 10ns zerujemy sygna³ zwrotu monety
         end
     always @(*)
         #1 begin

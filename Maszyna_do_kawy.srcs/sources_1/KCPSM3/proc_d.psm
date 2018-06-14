@@ -1,0 +1,75 @@
+; porty
+CONSTANT error_port,00;
+CONSTANT wyswietlacz_port,01;
+CONSTANT stan_port,02;
+; rejestry
+NAMEREG s0,error_register;
+NAMEREG s1,stan_register;
+NAMEREG s2,wyswietlacz_register;
+NAMEREG sA,interrupt_register;
+NAMEREG sB,tmp_register;
+NAMEREG sC,iter_register;
+NAMEREG sE,opL_register; mlodszy bajt licznika opoznienia
+NAMEREG sF,opH_register; starszy bajt liczniak opoznienia
+;-----------------------------------
+start:
+	  				LOAD	 error_register, 00;  zerujemy rejestr błędu
+	  				ENABLE INTERRUPT; wlacz obsluge przerwań
+int_r:
+					LOAD    wyswietlacz_register, interrupt_register;
+petla:
+					COMPARE	error_register, 00;
+					JUMP	NZ, petla;	 automat uszkodzony - wsztrzymujemy wykonywanie programu do czasu naprawy
+	  				CALL	opoznienie;
+	  				INPUT   stan_register, stan_port; pobierz aktualny stan automatu
+					ADD     stan_register, 0A; dodajemy 10 do stanu, aby wartości nie pokrywały się z kodami błedów maszyny
+					LOAD    wyswietlacz_register, stan_register; przenosimy wartość do rejestru wyświetlacza
+					COMPARE error_register, 00; ostatni test, czy wczesniej nie wystapilo przerwanie
+					JUMP    NZ, int_r; // maszyna niesprawna
+					OUTPUT  wyswietlacz_register, wyswietlacz_port;
+	  				JUMP	petla;
+
+opoznienie:
+					LOAD	opL_register, 10; przy symilacji zmienic na niska wartosc (10)
+					LOAD    opH_register, 00;  przy symulacji zmienić na 0
+p1:
+					SUB		opL_register, 01; odejmij jeden od licznika
+					SUBCY   opH_register, 00; odejmij CARRY (flaga przeniesienia) od starszego bajtu licznika
+					JUMP    NC, p1; brak CARRY flag -> petla do czasu konca odliczania
+					RETURN	; powrot
+										
+; działanie przerwania:
+; w przypadku wystąpienia błędu maszyny do procesora wysyłana jest mapa bitowa błędów
+; o ile nie wystąpił wiecej niż jeden błąd, program zwraca jego identyfikator (1-8)
+; w przypadku więcej niż jednego błędu zwracana jest wartość 255
+; w przypadku braku błędów nie zwracana jest żadna wartość
+przerwanie:
+		   			INPUT 	 error_register, error_port; mapa bitowa bledow
+		   			LOAD     wyswietlacz_register, 00; wstepnie do wyslania
+		   			LOAD     tmp_register, 00;
+		   			LOAD     iter_register, 08; 
+bit_test:			TEST 	 error_register, 80;  sprawdzamy najstarszy bit
+					JUMP 	 NZ,nie_zero
+next_bit:			RL		 error_register; przesuwamy bity w lewo
+					SUB		 iter_register, 01;  iteracja
+					JUMP     NZ, bit_test;
+					JUMP     wyslij; koniec iteracji
+nie_zero:		    
+					LOAD     wyswietlacz_register, iter_register; ; do wyslania identyfikator bledu
+					ADD		 tmp_register, 01;	 dodajemy 1 do licznika błędów
+					JUMP     next_bit;			 sprawdzamy kolejny bit
+wyslij:
+					COMPARE	 tmp_register, 01;
+					JUMP     Z, jeden_blad;
+					JUMP     NC, wiecej_bledow;
+					JUMP     retu;   brak bledów
+wiecej_bledow:
+					LOAD     wyswietlacz_register, FF;  wiecej niz jeden blad
+jeden_blad:
+					OUTPUT	 wyswietlacz_register,wyswietlacz_port;
+retu:				LOAD     interrupt_register, wyswietlacz_register;
+  					RETURNI ENABLE;
+
+wektor_przerwan:
+					ADDRESS	 3FF;
+					JUMP	 przerwanie;

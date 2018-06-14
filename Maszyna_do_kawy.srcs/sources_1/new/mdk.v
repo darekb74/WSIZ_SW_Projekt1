@@ -42,12 +42,15 @@ module mdk_top(
     output reg [4:0] L_3,                // segment 3
     output reg [4:0] L_4,                // segment 4
     // sterowanie poszczególnymi etapami parzenia kawy - do zmiany na [2:0]
-    output reg [2:0]urzadzenia              // sterowanie urz¹dzeniami
+    output reg [2:0]urzadzenia,             // sterowanie urz¹dzeniami
                                             // 000 - nic nie pracuje
     //output reg kubek,                     // 001 - podstawienie kubka
     //output reg woda,                      // 010 - w³¹czanie dozowania wody
     //output reg kawa,                      // 011 - w³¹czanie m³ynka do kawy
     //output reg mleko                      // 100 - w³¹czanie dozowania mleka (spieniacz)
+    output [3:0] stan_data,
+    output reg reset
+    
     );
     
     
@@ -57,19 +60,9 @@ module mdk_top(
     
     parameter tick_every = 20;              // pozwoli dostosowaæ czasy do zegaru (oraz przyspieszyæ symulacjê ;] )
 
-    // ³¹czymy modu³y
-    // pod³¹czamy modu³ monet
-    //^ modul_monet #(.CENA_OP1(CENA_OP1), .CENA_OP2(CENA_OP2), .CENA_OP3(CENA_OP3)) wrzut_zwrot(.clk(clk_div), .cmd_in(cmd_out), .cmd_out(cmd_in), .stan_mm(stan_mm));
-    // pod³¹czamy modu³ sprawnosci
-    //^ sprawnosc spr_test(.signal_s(sprawnosc_in));
-    // pod³¹czamy modu³ licznika
-    //^ counter #(.tick_every(tick_every)) licznik(.clk(clk_div), .count_out(licz_in), .count_in(licz_out), .count_secs(count_secs));
-    // pod³¹czamy modu³ wyœwietlacza
-    //^ wyswietlacz_4x7seg wys_pan(.clk(clk), .L_1(L_1), .L_2(L_2), .L_3(L_3), .L_4(L_4));
-    // pod³¹czamy dzielnik czêstotliwoœci
-    //^ divider #(1) div(.clk(clk), .clk_div(clk_div));
-
     reg [3:0]stan_top, stan_n;              // stan i nastêpny stan modu³u g³ównego
+    
+    assign stan_data = stan_n;
     
     function [9:0]licznikNaLiczby;
         input reg [6:0] count_secs;
@@ -80,11 +73,38 @@ module mdk_top(
             licznikNaLiczby = {b[4:0],a[4:0]};
             $strobe("strobe  count_secs:%b(%0d) a:%b(%0d) b:%b(%0d) @ %0t", count_secs, count_secs, b[4:0], b[4:0], a[4:0], a[4:0], $time);
         end
-    endfunction 
+    endfunction
     
+    always @(posedge sprawnosc_in) // awaria automatu
+        begin
+            if (stan_top < `PODSTAW_KUBEK) // zapobiega resetowi w momencie, gdy automat parzy ju¿ kawê
+                begin
+                    case(cmd_out)
+                        `CMD_OP1:
+                        begin
+                            cmd_out = `CMD_RESET1;
+                            stan_n = `ZWRACAM;
+                        end
+                        `CMD_OP2:
+                        begin
+                            cmd_out = `CMD_RESET2;
+                            stan_n = `ZWRACAM;
+                        end
+                        `CMD_OP3:
+                        begin
+                            cmd_out = `CMD_RESET3;
+                            stan_n = `ZWRACAM;
+                        end
+                    endcase
+                end
+        end
     
     always @(panel_przyciskow_in)
         #1 begin
+            if (panel_przyciskow_in == `CMD_NIC && reset == 1'b1)
+                begin
+                    reset = 1'b0;
+                end
             if (panel_przyciskow_in == `CMD_RESET && cmd_in === 2'bXX) // automat nic nie robi - reset pocz¹tkowy
                 begin
                     // ustawienia poczatkowe
@@ -98,6 +118,7 @@ module mdk_top(
                     L_2 = 5'b00000;
                     L_3 = 5'b00000;
                     L_4 = 5'b00000;
+                    reset = 1'b1; // reset procesora
                 end
             if (sprawnosc_in == 1'b0) begin     // sterowanie dostêpne tylko w przypadku sprawnej maszyny
                 case (panel_przyciskow_in)

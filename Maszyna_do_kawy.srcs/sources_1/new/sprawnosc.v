@@ -1,6 +1,6 @@
 `include "defines.v"
 
-module sprawnosc(c_k, p_w, i_k, i_m, p_b, signal_s);
+module sprawnosc(c_k, p_w, i_k, i_m, p_b, signal_s, sprawnosc_map);
 
 // c_k - czujnik iloœci kubków
 // p_w - pod³¹czenie wody
@@ -10,9 +10,12 @@ module sprawnosc(c_k, p_w, i_k, i_m, p_b, signal_s);
 // signal_s - wyjœciowy sygna³
 
 output signal_s;
+output [7:0]sprawnosc_map ;
 input c_k, p_w, i_k, i_m, p_b;
 //powy¿ej zadeklarowa³em porty
 
 assign signal_s = c_k | p_w | i_k | i_m | p_b;
+assign sprawnosc_map = {3'b000, c_k, p_w, i_k, i_m, p_b};
+
 
 endmodule
